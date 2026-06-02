@@ -46,5 +46,12 @@ public class HomeActivity extends AppCompatActivity {
         navProfile.setOnClickListener(v -> {
             startActivity(new Intent(this, ProfileActivity.class));
         });
+        btnChatAI.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ChatActivity.class));
+        });
+
+        navChat.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ChatActivity.class));
+        });
     }
 }

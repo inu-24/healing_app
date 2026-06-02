@@ -96,4 +96,19 @@
     <string name="user1">👤</string>
     <string name="type">📊</string>
     <string name="art4">🎨</string>
+    <string name="back">←</string>
+    <string name="healing_bot">Healing Bot</string>
+    <string name="todo5">TODO</string>
+    <string name="online_always_here_for_you">● Online - always here for you</string>
+    <string name="dots">⋮</string>
+    <string name="healing_bot1">Healing Bot</string>
+    <string name="hi_how_are_you_feeling_today_i_m_here_to_listen_and_support_you">Hi! How are you feeling today? I\'m here to listen and support you 💚</string>
+    <string name="i_have_been_experiencing_some_stress_lately">I have been experiencing some stress lately</string>
+    <string name="i_m_sorry_to_hear_that_stress_can_be_really_overwhelming_would_you_like_to_try_some_art_therapy_to_help_express_your_feelings">I\'m sorry to hear that. Stress can be really overwhelming. Would you like to try some art therapy to help express your feelings?</string>
+    <string name="todo6">TODO</string>
+    <string name="save_as_canvas">Save as canvas</string>
+    <string name="try_breathing_exercise">Try breathing exercise</string>
+    <string name="type_your_message">Type your message...</string>
+    <string name="todo7">TODO</string>
+    <string name="todo8">TODO</string>
 </resources>

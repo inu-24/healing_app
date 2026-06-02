@@ -14,9 +14,6 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnGetStarted = findViewById(R.id.btnGetStarted);
         btnGetStarted.setOnClickListener(v -> {
-            // Will go to Login screen later
-        });
-        btnGetStarted.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
     }
