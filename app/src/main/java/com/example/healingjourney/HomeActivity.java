@@ -53,5 +53,12 @@ public class HomeActivity extends AppCompatActivity {
         navChat.setOnClickListener(v -> {
             startActivity(new Intent(HomeActivity.this, ChatActivity.class));
         });
+        btnStartDrawing.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ArtActivity.class));
+        });
+
+        navArt.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ArtActivity.class));
+        });
     }
 }

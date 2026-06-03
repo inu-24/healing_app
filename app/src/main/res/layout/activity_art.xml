@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E8F5E9">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="#2E7D32"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back1"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:layout_marginEnd="12dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/art_canvas"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:textColor="#A5D6A7"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <!-- Canvas Hint Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/express_yourself_freely"
+        android:textColor="#4CAF50"
+        android:textSize="13sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Drawing Canvas -->
+    <com.example.healingjourney.DrawingView
+        android:id="@+id/drawingView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Tools Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#FFFFFF"
+        android:padding="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <TextView
+            android:id="@+id/btnEraser"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="@string/blank"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/btnUndo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="@string/undo"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/btnRedo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="@string/redo"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/btnClear"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="@string/bin"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Brush Size -->
+        <SeekBar
+            android:id="@+id/seekBrushSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="50"
+            android:progress="10"
+            android:progressTint="#2E7D32"
+            android:thumbTint="#2E7D32"/>
+
+    </LinearLayout>
+
+    <!-- Color Palette -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <View
+            android:id="@+id/colorBlack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_black"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/colorRed"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_red"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/colorGreen"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_green"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/colorBlue"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_blue"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/colorYellow"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_yellow"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/colorPurple"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_purple"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/colorWhite"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/color_circle_white"/>
+
+    </LinearLayout>
+
+    <!-- Analyze Emotion Button -->
+    <Button
+        android:id="@+id/btnAnalyzeEmotion"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/analyze_emotion"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#2E7D32"
+        android:textStyle="bold"
+        android:layout_margin="16dp"/>
+
+</LinearLayout>

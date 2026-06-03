@@ -111,4 +111,15 @@
     <string name="type_your_message">Type your message...</string>
     <string name="todo7">TODO</string>
     <string name="todo8">TODO</string>
+    <string name="analyze_emotion">Analyze Emotion</string>
+    <string name="bin">🗑</string>
+    <string name="redo">↪</string>
+    <string name="undo">↩</string>
+    <string name="blank">⬜</string>
+    <string name="express_yourself_freely">Express yourself freely</string>
+    <string name="save">Save</string>
+    <string name="art_canvas">Art canvas</string>
+    <string name="back1">←</string>
+    <string name="coming_soon">Coming soon...</string>
+    <string name="emotion_analysis">Emotion Analysis</string>
 </resources>
