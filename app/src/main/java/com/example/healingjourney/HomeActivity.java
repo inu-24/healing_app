@@ -60,5 +60,12 @@ public class HomeActivity extends AppCompatActivity {
         navArt.setOnClickListener(v -> {
             startActivity(new Intent(HomeActivity.this, ArtActivity.class));
         });
+        navProgress.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ProgressActivity.class));
+        });
+
+        findViewById(R.id.btnViewProgress).setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, ProgressActivity.class));
+        });
     }
 }
