@@ -147,4 +147,21 @@
     <string name="you_have_been_consistently_tracking_your_emotions_keep_it_up">You have been consistently tracking your emotions. Keep it up!</string>
     <string name="my_progress">My progress</string>
     <string name="arrow">←</string>
+    <string name="save_to_progress">Save to progress</string>
+    <string name="draw_again">Draw Again</string>
+    <string name="hopeful">Hopeful</string>
+    <string name="stress">Stress</string>
+    <string name="calm1">Calm</string>
+    <string name="you_may_be_experiencing_mild_stress_but_your_emotions_are_mostly_balanced_your_use_of_soft_colors_and_gentle_strokes_suggests_an_inner_calm_trying_to_surface">You may be experiencing mild stress, but your emotions are mostly balanced. Your use of soft colors and gentle strokes suggests an inner calm trying to surface.</string>
+    <string name="what_this_means">What this means</string>
+    <string name="hopeful1">🌿 Hopeful</string>
+    <string name="slight_stress">😟 Slight Stress</string>
+    <string name="calm2">😌 Calm</string>
+    <string name="your_drawing_reflects_calmness_nwith_slight_stress_tones">Your drawing reflects calmness\nwith slight stress tones</string>
+    <string name="happy1">🙂</string>
+    <string name="sparkle">✨</string>
+    <string name="sparkles">✨</string>
+    <string name="emotion_analysis1">Emotion analysis</string>
+    <string name="share">Share</string>
+    <string name="back_arrow">←</string>
 </resources>
