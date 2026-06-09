@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "602539372299",
+    "project_id": "healingjourney-a3b85",
+    "storage_bucket": "healingjourney-a3b85.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602539372299:android:bdbe4e91689be6c0337c0e",
+        "android_client_info": {
+          "package_name": "com.example.healingjourney"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVChk2elswhZZL2b7fRfSAdB_VuiDHPt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
