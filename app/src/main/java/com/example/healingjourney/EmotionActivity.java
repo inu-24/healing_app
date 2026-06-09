@@ -2,6 +2,8 @@ package com.example.healingjourney;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,10 +21,8 @@ public class EmotionActivity extends AppCompatActivity {
         Button btnSaveProgress = findViewById(R.id.btnSaveProgress);
         TextView tvDrawAgain = findViewById(R.id.tvDrawAgain);
 
-        // Back button
         btnBack.setOnClickListener(v -> finish());
 
-        // Share button
         btnShare.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
@@ -32,14 +32,13 @@ public class EmotionActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "Share via"));
         });
 
-        // Save to progress
         btnSaveProgress.setOnClickListener(v -> {
             Toast.makeText(this,
                     "Saved to your progress! 🎉",
                     Toast.LENGTH_SHORT).show();
 
-            // Go to Progress screen
-            new android.os.Handler().postDelayed(() -> {
+            // ✅ Fixed: Use new Handler(Looper.getMainLooper())
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 startActivity(new Intent(
                         EmotionActivity.this,
                         ProgressActivity.class));
@@ -47,7 +46,6 @@ public class EmotionActivity extends AppCompatActivity {
             }, 1000);
         });
 
-        // Draw Again
         tvDrawAgain.setOnClickListener(v -> {
             startActivity(new Intent(
                     EmotionActivity.this,
