@@ -1,13 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Healing Journey</string>
     <string name="ai_powered_art_therapy">AI - Powered art therapy</string>
     <string name="healing_journey">Healing Journey</string>
     <string name="todo">TODO</string>
-    <string name="explore_your_emotions_through_nai_it_listens_understands_nand_supports_you">Explore your emotions through\nAI. It listens, understands\nand supports you.</string>
+    <string name="todo1">TODO</string>
+    <string name="todo2">TODO</string>
+    <string name="todo3">TODO</string>
+    <string name="todo4">TODO</string>
+    <string name="todo5">TODO</string>
+    <string name="todo6">TODO</string>
+    <string name="todo7">TODO</string>
+    <string name="todo8">TODO</string>
+
+    <!-- ✅ Old names kept for XML layouts -->
+    <string name="explore_your_emotions_through_nai_it_listens_understands_nand_supports_you">Explore your emotions through AI. It listens, understands and supports you.</string>
+    <string name="explore_your_emotions">Explore your emotions through AI. It listens, understands and supports you.</string>
+    <string name="let_s_take_care_of_your_mind_today">Let\'s take care of your mind today</string>
+    <string name="lets_take_care">Let\'s take care of your mind today</string>
+    <string name="hi_how_are_you_feeling_today_i_m_here_to_listen_and_support_you">Hi! How are you feeling today? I\'m here to listen and support you</string>
+    <string name="hi_how_are_you_feeling">Hi! How are you feeling today? I\'m here to listen and support you</string>
+    <string name="i_m_sorry_to_hear_that_stress_can_be_really_overwhelming_would_you_like_to_try_some_art_therapy_to_help_express_your_feelings">I\'m sorry to hear that. Stress can be really overwhelming. Would you like to try some art therapy?</string>
+    <string name="im_sorry_to_hear_that">I\'m sorry to hear that. Stress can be really overwhelming. Would you like to try some art therapy?</string>
+    <string name="your_drawing_reflects_calmness_nwith_slight_stress_tones">Your drawing reflects calmness with slight stress tones</string>
+    <string name="your_drawing_reflects">Your drawing reflects calmness with slight stress tones</string>
+    <string name="you_may_be_experiencing_mild_stress_but_your_emotions_are_mostly_balanced_your_use_of_soft_colors_and_gentle_strokes_suggests_an_inner_calm_trying_to_surface">You may be experiencing mild stress, but your emotions are mostly balanced. Your use of soft colors and gentle strokes suggests an inner calm trying to surface.</string>
+    <string name="you_may_be_experiencing">You may be experiencing mild stress, but your emotions are mostly balanced.</string>
+    <string name="try_drawing_how_you_feel_today_n_take_5_deep_breaths_n_express_yourself_freely_through_art">Try drawing how you feel today. Take 5 deep breaths. Express yourself freely through art.</string>
+    <string name="tips_content">Try drawing how you feel today. Take 5 deep breaths. Express yourself freely through art.</string>
+    <string name="you_have_been_consistently_tracking_your_emotions_keep_it_up">You have been consistently tracking your emotions. Keep it up!</string>
+    <string name="you_have_been_consistently">You have been consistently tracking your emotions. Keep it up!</string>
+    <string name="i_agree_to_the_terms_of_services_and_privacy_policy">I agree to the Terms of services and Privacy Policy</string>
+    <string name="i_agree_to_the_terms">I agree to the Terms of services and Privacy Policy</string>
+
+    <!-- Login & Register -->
     <string name="get_started">Get Started</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
     <string name="welcome_back">Welcome back</string>
-    <string name="let_s_take_care_of_your_mind_today">Let\'s take care of your mind today</string>
     <string name="email_address">Email address</string>
     <string name="example_email_com">example@email.com</string>
     <string name="password">Password</string>
@@ -16,7 +45,7 @@
     <string name="or">or</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="no_account_register">No account? Register</string>
-    <string name="space">••••••••</string>
+    <string name="space">........</string>
     <string name="create_account">Create account</string>
     <string name="start_your_healing_journey">Start your healing journey</string>
     <string name="full_name">Full Name</string>
@@ -24,15 +53,15 @@
     <string name="example_email1_com">example@email.com</string>
     <string name="email_address1">Email address</string>
     <string name="create_password">Create Password</string>
-    <string name="space1">••••••••</string>
+    <string name="space1">........</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="space2">••••••••</string>
-    <string name="i_agree_to_the_terms_of_services_and_privacy_policy">I agree to the Terms of services and Privacy Policy</string>
+    <string name="space2">........</string>
     <string name="sign_up">Sign Up</string>
     <string name="already_have_an_account_log_in">Already have an account? Log in</string>
+
+    <!-- Home -->
     <string name="good_morning">Good Morning</string>
-    <string name="inuli">Inuli 🌿</string>
-    <string name="todo1">TODO</string>
+    <string name="inuli">Inuli</string>
     <string name="how_are_you_feeling_today">How are you feeling today?</string>
     <string name="emoji">😢</string>
     <string name="emoji1">😔</string>
@@ -40,88 +69,105 @@
     <string name="emoji3">🙂</string>
     <string name="emoji4">😄</string>
     <string name="quick_access">Quick access</string>
-    <string name="start_drawing">🎨 Start Drawing</string>
-    <string name="chat_with_ai">🤖 Chat with AI</string>
+    <string name="start_drawing">Start Drawing</string>
+    <string name="chat_with_ai">Chat with AI</string>
     <string name="mood_progress">Mood Progress</string>
     <string name="track_your_emotional_wellness_journey">Track your emotional wellness journey</string>
     <string name="this_week">This Week</string>
     <string name="view_progress">View Progress</string>
-    <string name="tips_and_guides">✅ Tips and guides</string>
-    <string name="try_drawing_how_you_feel_today_n_take_5_deep_breaths_n_express_yourself_freely_through_art">• Try drawing how you feel today\n• Take 5 deep breaths\n• Express yourself freely through art</string>
-    <string name="home">🏠</string>
+    <string name="tips_and_guides">Tips and guides</string>
+    <string name="home">Home</string>
     <string name="home1">Home</string>
     <string name="art">Art</string>
-    <string name="art1">🎨</string>
-    <string name="bar">📊</string>
+    <string name="art1">Art</string>
+    <string name="bar">Progress</string>
     <string name="progress">Progress</string>
     <string name="chat">Chat</string>
-    <string name="chat1">💬</string>
+    <string name="chat1">Chat</string>
     <string name="profile">Profile</string>
-    <string name="user">👤</string>
+    <string name="user">Profile</string>
+
+    <!-- Profile -->
     <string name="my_profile">My Profile</string>
-    <string name="todo2">TODO</string>
-    <string name="todo3">TODO</string>
-    <string name="edit_profile">✏️ Edit Profile</string>
+    <string name="edit_profile">Edit Profile</string>
     <string name="mood_this_week">Mood This Week</string>
     <string name="healing_since_jan_2025">Healing since Jan 2025</string>
     <string name="inuli1">Inuli</string>
-    <string name="todo4">TODO</string>
     <string name="_12">12</string>
     <string name="check_ins_logged">Check-ins logged</string>
     <string name="_7">7</string>
     <string name="good_mood_days">Good mood days</string>
     <string name="most_frequent_mood">Most frequent mood</string>
     <string name="achievements">Achievements</string>
-    <string name="tree">🌱</string>
+    <string name="tree">First Steps</string>
     <string name="first_steps">First steps</string>
     <string name="first_check_in">First check-in</string>
-    <string name="art2">🎨</string>
+    <string name="art2">Artist</string>
     <string name="artist">Artist</string>
     <string name="_5_artworks">5 artworks</string>
-    <string name="fire">🔥</string>
+    <string name="fire">3 Day Streak</string>
     <string name="_3_day_streak">3-day streak</string>
     <string name="keep_going">Keep going!</string>
-    <string name="lock">🔒</string>
+    <string name="lock">7 Day Streak</string>
     <string name="_7_day_streak">7-day streak</string>
     <string name="_4_more_days">4 more days</string>
-    <string name="no">🚪</string>
+    <string name="no">Logout</string>
     <string name="log_out">Log out</string>
-    <string name="home2">🏠</string>
+
+    <!-- Navigation -->
+    <string name="home2">Home</string>
     <string name="home3">Home</string>
     <string name="art3">Art</string>
     <string name="progress1">Progress</string>
     <string name="chat2">Chat</string>
     <string name="profile1">Profile</string>
-    <string name="msg">💬</string>
-    <string name="user1">👤</string>
-    <string name="type">📊</string>
-    <string name="art4">🎨</string>
-    <string name="back">←</string>
+    <string name="msg">Chat</string>
+    <string name="user1">Profile</string>
+    <string name="type">Progress</string>
+    <string name="art4">Art</string>
+
+    <!-- Chat -->
+    <string name="back">Back</string>
     <string name="healing_bot">Healing Bot</string>
-    <string name="todo5">TODO</string>
-    <string name="online_always_here_for_you">● Online - always here for you</string>
-    <string name="dots">⋮</string>
+    <string name="online_always_here_for_you">Online - always here for you</string>
+    <string name="dots">...</string>
     <string name="healing_bot1">Healing Bot</string>
-    <string name="hi_how_are_you_feeling_today_i_m_here_to_listen_and_support_you">Hi! How are you feeling today? I\'m here to listen and support you 💚</string>
     <string name="i_have_been_experiencing_some_stress_lately">I have been experiencing some stress lately</string>
-    <string name="i_m_sorry_to_hear_that_stress_can_be_really_overwhelming_would_you_like_to_try_some_art_therapy_to_help_express_your_feelings">I\'m sorry to hear that. Stress can be really overwhelming. Would you like to try some art therapy to help express your feelings?</string>
-    <string name="todo6">TODO</string>
     <string name="save_as_canvas">Save as canvas</string>
     <string name="try_breathing_exercise">Try breathing exercise</string>
     <string name="type_your_message">Type your message...</string>
-    <string name="todo7">TODO</string>
-    <string name="todo8">TODO</string>
+
+    <!-- Art -->
     <string name="analyze_emotion">Analyze Emotion</string>
-    <string name="bin">🗑</string>
-    <string name="redo">↪</string>
-    <string name="undo">↩</string>
-    <string name="blank">⬜</string>
+    <string name="bin">Delete</string>
+    <string name="redo">Redo</string>
+    <string name="undo">Undo</string>
+    <string name="blank">Eraser</string>
     <string name="express_yourself_freely">Express yourself freely</string>
     <string name="save">Save</string>
     <string name="art_canvas">Art canvas</string>
-    <string name="back1">←</string>
+    <string name="back1">Back</string>
+
+    <!-- Emotion -->
     <string name="coming_soon">Coming soon...</string>
     <string name="emotion_analysis">Emotion Analysis</string>
+    <string name="what_this_means">What this means</string>
+    <string name="hopeful1">Hopeful</string>
+    <string name="slight_stress">Slight Stress</string>
+    <string name="calm2">Calm</string>
+    <string name="happy1">Happy</string>
+    <string name="sparkle">*</string>
+    <string name="sparkles">*</string>
+    <string name="emotion_analysis1">Emotion analysis</string>
+    <string name="share">Share</string>
+    <string name="back_arrow">Back</string>
+    <string name="save_to_progress">Save to progress</string>
+    <string name="draw_again">Draw Again</string>
+    <string name="hopeful">Hopeful</string>
+    <string name="stress">Stress</string>
+    <string name="calm1">Calm</string>
+
+    <!-- Progress -->
     <string name="week">Week</string>
     <string name="month">Month</string>
     <string name="year">Year</string>
@@ -138,30 +184,13 @@
     <string name="_16">16</string>
     <string name="artworks">Artworks</string>
     <string name="streak">Streak</string>
-    <string name="seven">7🔥</string>
+    <string name="seven">7</string>
     <string name="mood_breakdown">Mood Breakdown</string>
     <string name="calm">Calm</string>
     <string name="happy">Happy</string>
     <string name="stressed">Stressed</string>
-    <string name="great_job">🎉 Great job!</string>
-    <string name="you_have_been_consistently_tracking_your_emotions_keep_it_up">You have been consistently tracking your emotions. Keep it up!</string>
+    <string name="great_job">Great job!</string>
     <string name="my_progress">My progress</string>
-    <string name="arrow">←</string>
-    <string name="save_to_progress">Save to progress</string>
-    <string name="draw_again">Draw Again</string>
-    <string name="hopeful">Hopeful</string>
-    <string name="stress">Stress</string>
-    <string name="calm1">Calm</string>
-    <string name="you_may_be_experiencing_mild_stress_but_your_emotions_are_mostly_balanced_your_use_of_soft_colors_and_gentle_strokes_suggests_an_inner_calm_trying_to_surface">You may be experiencing mild stress, but your emotions are mostly balanced. Your use of soft colors and gentle strokes suggests an inner calm trying to surface.</string>
-    <string name="what_this_means">What this means</string>
-    <string name="hopeful1">🌿 Hopeful</string>
-    <string name="slight_stress">😟 Slight Stress</string>
-    <string name="calm2">😌 Calm</string>
-    <string name="your_drawing_reflects_calmness_nwith_slight_stress_tones">Your drawing reflects calmness\nwith slight stress tones</string>
-    <string name="happy1">🙂</string>
-    <string name="sparkle">✨</string>
-    <string name="sparkles">✨</string>
-    <string name="emotion_analysis1">Emotion analysis</string>
-    <string name="share">Share</string>
-    <string name="back_arrow">←</string>
+    <string name="arrow">Back</string>
+
 </resources>
