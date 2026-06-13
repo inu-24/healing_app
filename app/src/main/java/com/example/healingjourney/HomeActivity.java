@@ -1,22 +1,20 @@
 package com.example.healingjourney;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseActivity {
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        setupBottomNav();
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -25,10 +23,6 @@ public class HomeActivity extends AppCompatActivity {
         Button btnStartDrawing = findViewById(R.id.btnStartDrawing);
         Button btnChatAI = findViewById(R.id.btnChatAI);
         Button btnViewProgress = findViewById(R.id.btnViewProgress);
-        LinearLayout navArt = findViewById(R.id.navArt);
-        LinearLayout navChat = findViewById(R.id.navChat);
-        LinearLayout navProgress = findViewById(R.id.navProgress);
-        LinearLayout navProfile = findViewById(R.id.navProfile);
 
         // Load username from Firestore
         if (mAuth.getCurrentUser() != null) {
@@ -45,26 +39,16 @@ public class HomeActivity extends AppCompatActivity {
                     });
         }
 
-        // ✅ Each button has only ONE click listener
+        // ✅ Quick access buttons
         btnStartDrawing.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ArtActivity.class)));
+                startActivity(new android.content.Intent(HomeActivity.this, ArtActivity.class)));
 
         btnChatAI.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ChatActivity.class)));
+                startActivity(new android.content.Intent(HomeActivity.this, ChatActivity.class)));
 
         btnViewProgress.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ProgressActivity.class)));
+                startActivity(new android.content.Intent(HomeActivity.this, ProgressActivity.class)));
 
-        navArt.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ArtActivity.class)));
 
-        navChat.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ChatActivity.class)));
-
-        navProgress.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ProgressActivity.class)));
-
-        navProfile.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ProfileActivity.class)));
     }
 }

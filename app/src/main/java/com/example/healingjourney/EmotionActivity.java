@@ -7,14 +7,14 @@ import android.os.Looper;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class EmotionActivity extends AppCompatActivity {
+public class EmotionActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emotion);
+        setupBottomNav();
 
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnShare = findViewById(R.id.btnShare);
@@ -37,7 +37,6 @@ public class EmotionActivity extends AppCompatActivity {
                     "Saved to your progress! 🎉",
                     Toast.LENGTH_SHORT).show();
 
-            // ✅ Fixed: Use new Handler(Looper.getMainLooper())
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 startActivity(new Intent(
                         EmotionActivity.this,

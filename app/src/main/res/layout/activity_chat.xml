@@ -234,4 +234,5 @@
 
     </LinearLayout>
 
+    <include layout="@layout/bottom_nav"/>
 </LinearLayout>

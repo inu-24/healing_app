@@ -7,12 +7,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.widget.LinearLayout.LayoutParams;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity {
 
     LinearLayout chatContainer;
     ScrollView scrollChat;
@@ -22,6 +21,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        setupBottomNav();
 
         chatContainer = findViewById(R.id.chatContainer);
         scrollChat = findViewById(R.id.scrollChat);
@@ -37,10 +37,7 @@ public class ChatActivity extends AppCompatActivity {
             if (!message.isEmpty()) {
                 addUserMessage(message);
                 etMessage.setText("");
-                // Auto AI reply
-                scrollChat.postDelayed(this::addAIMessage,
-                        1000
-                );
+                scrollChat.postDelayed(this::addAIMessage, 1000);
             }
         });
     }

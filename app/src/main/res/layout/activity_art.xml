@@ -197,4 +197,5 @@
         android:textStyle="bold"
         android:layout_margin="16dp"/>
 
+    <include layout="@layout/bottom_nav"/>
 </LinearLayout>

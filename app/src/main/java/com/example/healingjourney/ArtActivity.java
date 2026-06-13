@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class ArtActivity extends AppCompatActivity {
+public class ArtActivity extends BaseActivity {
 
     DrawingView drawingView;
 
@@ -14,6 +13,7 @@ public class ArtActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_art);
+        setupBottomNav();
 
         drawingView = findViewById(R.id.drawingView);
 
@@ -66,6 +66,6 @@ public class ArtActivity extends AppCompatActivity {
 
         // Analyze Emotion
         btnAnalyze.setOnClickListener(v ->
-                startActivity(new Intent(ArtActivity.this,EmotionActivity.class)));
+                startActivity(new Intent(ArtActivity.this, EmotionActivity.class)));
     }
 }

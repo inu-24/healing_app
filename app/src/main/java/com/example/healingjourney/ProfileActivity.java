@@ -7,11 +7,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class ProfileActivity extends AppCompatActivity {
+// ✅ Changed from AppCompatActivity to BaseActivity
+public class ProfileActivity extends BaseActivity {
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
@@ -21,20 +21,14 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        setupBottomNav(); // ← Uses BaseActivity's version now
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // ✅ Correct view types matching XML
         TextView tvName = findViewById(R.id.tvName);
         ImageView btnBack = findViewById(R.id.btnBack);
         LinearLayout btnLogout = findViewById(R.id.btnLogout);
-
-        // Navigation
-        LinearLayout navHome = findViewById(R.id.navHome);
-        LinearLayout navArt = findViewById(R.id.navArt);
-        LinearLayout navProgress = findViewById(R.id.navProgress);
-        LinearLayout navChat = findViewById(R.id.navChat);
 
         // Load user data from Firestore
         if (mAuth.getCurrentUser() != null) {
@@ -67,18 +61,6 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-        // Bottom Navigation
-        navHome.setOnClickListener(v ->
-                startActivity(new Intent(this, HomeActivity.class)));
-
-        navArt.setOnClickListener(v ->
-                startActivity(new Intent(this, ArtActivity.class)));
-
-        navProgress.setOnClickListener(v ->
-                startActivity(new Intent(this, ProgressActivity.class)));
-
-        navChat.setOnClickListener(v ->
-                startActivity(new Intent(this, ChatActivity.class)));
     }
+
 }

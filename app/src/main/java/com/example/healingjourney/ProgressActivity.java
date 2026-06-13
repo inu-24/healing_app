@@ -2,9 +2,8 @@ package com.example.healingjourney;
 
 import android.os.Bundle;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class ProgressActivity extends AppCompatActivity {
+public class ProgressActivity extends BaseActivity {
 
     TextView tabWeek, tabMonth, tabYear;
 
@@ -12,6 +11,7 @@ public class ProgressActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress);
+        setupBottomNav();
 
         TextView btnBack = findViewById(R.id.btnBack);
         tabWeek = findViewById(R.id.tabWeek);
@@ -26,7 +26,6 @@ public class ProgressActivity extends AppCompatActivity {
     }
 
     private void setActiveTab(String tab) {
-        // Reset all tabs
         tabWeek.setBackgroundColor(0x00000000);
         tabMonth.setBackgroundColor(0x00000000);
         tabYear.setBackgroundColor(0x00000000);
@@ -34,7 +33,6 @@ public class ProgressActivity extends AppCompatActivity {
         tabMonth.setTextColor(0xFF2E7D32);
         tabYear.setTextColor(0xFF2E7D32);
 
-        // Set active tab
         switch (tab) {
             case "week":
                 tabWeek.setBackgroundColor(0xFF2E7D32);
