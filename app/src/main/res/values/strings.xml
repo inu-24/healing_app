@@ -192,5 +192,15 @@
     <string name="great_job">🎉 Great job!</string>
     <string name="my_progress">My progress</string>
     <string name="arrow">←</string>
+    <string name="house">🏠</string>
+    <string name="home4">Home</string>
+    <string name="ART">🎨</string>
+    <string name="art5">Art</string>
+    <string name="USER">👤</string>
+    <string name="profile2">Profile</string>
+    <string name="CHAT">💬</string>
+    <string name="chat3">Chat</string>
+    <string name="CHART">📊</string>
+    <string name="progress2">Progress</string>
 
 </resources>

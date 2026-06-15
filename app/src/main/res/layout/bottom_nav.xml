@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     android:background="#2E7D32">
 
@@ -16,14 +18,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🏠"
+            android:text="@string/house"
             android:textSize="20sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Home"
+            android:text="@string/home4"
             android:textColor="#FFFFFF"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,14 +39,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🎨"
+            android:text="@string/ART"
             android:textSize="20sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Art"
+            android:text="@string/art5"
             android:textColor="#A5D6A7"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,14 +60,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📊"
+            android:text="@string/CHART"
             android:textSize="20sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Progress"
+            android:text="@string/progress2"
             android:textColor="#A5D6A7"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 
     <LinearLayout
@@ -76,14 +81,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="💬"
+            android:text="@string/CHAT"
             android:textSize="20sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chat"
+            android:text="@string/chat3"
             android:textColor="#A5D6A7"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 
     <LinearLayout
@@ -96,14 +102,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="👤"
+            android:text="@string/USER"
             android:textSize="20sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="@string/profile2"
             android:textColor="#A5D6A7"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 
 </LinearLayout>
