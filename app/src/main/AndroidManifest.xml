@@ -29,6 +29,7 @@
         <activity android:name=".ArtActivity"/>
         <activity android:name=".EmotionActivity"/>
         <activity android:name=".ProgressActivity"/>
+        <activity android:name=".MandalaActivity"/>
 
     </application>
 

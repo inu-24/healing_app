@@ -202,5 +202,8 @@
     <string name="chat3">Chat</string>
     <string name="CHART">📊</string>
     <string name="progress2">Progress</string>
+    <string name="select_a_mandala_to_color">Select a mandala to color 🌸</string>
+    <string name="choose_mandala">Choose Mandala 🎨</string>
+    <string name="arrow1">←</string>
 
 </resources>

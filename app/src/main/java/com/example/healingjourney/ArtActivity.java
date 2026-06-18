@@ -1,13 +1,21 @@
 package com.example.healingjourney;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.*;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ArtActivity extends BaseActivity {
 
     DrawingView drawingView;
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +23,17 @@ public class ArtActivity extends BaseActivity {
         setContentView(R.layout.activity_art);
         setupBottomNav();
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         drawingView = findViewById(R.id.drawingView);
+
+        // ✅ Load mandala if selected
+        int mandalaId = getIntent().getIntExtra("mandalaId", -1);
+        if (mandalaId != -1) {
+            Bitmap mandala = BitmapFactory.decodeResource(
+                    getResources(), mandalaId);
+            drawingView.setBackgroundBitmap(mandala);
+        }
 
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnSave = findViewById(R.id.btnSave);
@@ -42,30 +60,73 @@ public class ArtActivity extends BaseActivity {
         findViewById(R.id.colorWhite).setOnClickListener(v ->
                 drawingView.setColor(Color.WHITE));
 
-        // Tool buttons
         btnEraser.setOnClickListener(v -> drawingView.setEraser());
         btnUndo.setOnClickListener(v -> drawingView.undo());
         btnRedo.setOnClickListener(v -> drawingView.redo());
         btnClear.setOnClickListener(v -> drawingView.clearCanvas());
         btnBack.setOnClickListener(v -> finish());
 
-        // Brush size
         seekBrushSize.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
-                    public void onProgressChanged(SeekBar s, int progress, boolean b) {
-                        drawingView.setStrokeWidth(progress + 5f);
+                    public void onProgressChanged(SeekBar s, int p, boolean b) {
+                        drawingView.setStrokeWidth(p + 5f);
                     }
                     @Override public void onStartTrackingTouch(SeekBar s) {}
                     @Override public void onStopTrackingTouch(SeekBar s) {}
                 });
 
-        // Save
-        btnSave.setOnClickListener(v ->
-                Toast.makeText(this, "Canvas saved! 🎨", Toast.LENGTH_SHORT).show());
+        // ✅ Save drawing locally + record in Firestore
+        btnSave.setOnClickListener(v -> saveDrawingLocally());
 
-        // Analyze Emotion
-        btnAnalyze.setOnClickListener(v ->
-                startActivity(new Intent(ArtActivity.this, EmotionActivity.class)));
+        // ✅ Analyze Emotion
+        btnAnalyze.setOnClickListener(v -> {
+            int dominantColor = drawingView.getDominantColor();
+            Intent intent = new Intent(
+                    ArtActivity.this, EmotionActivity.class);
+            intent.putExtra("dominantColor", dominantColor);
+            startActivity(intent);
+        });
+    }
+
+    private void saveDrawingLocally() {
+        try {
+            Toast.makeText(this, "Saving... 💾",
+                    Toast.LENGTH_SHORT).show();
+
+            Bitmap bitmap = drawingView.getBitmap();
+            String fileName = "artwork_" +
+                    System.currentTimeMillis() + ".png";
+
+            java.io.FileOutputStream fos =
+                    openFileOutput(fileName, MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+
+            // Save record to Firestore
+            if (mAuth.getCurrentUser() != null) {
+                String userId = mAuth.getCurrentUser().getUid();
+                Map<String, Object> artData = new HashMap<>();
+                artData.put("fileName", fileName);
+                artData.put("timestamp",
+                        com.google.firebase.Timestamp.now());
+                artData.put("userId", userId);
+
+                db.collection("artworks")
+                        .add(artData)
+                        .addOnSuccessListener(ref ->
+                                Toast.makeText(this,
+                                        "Artwork saved! 🎨",
+                                        Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e ->
+                                Toast.makeText(this,
+                                        "Error: " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show());
+            }
+        } catch (Exception e) {
+            Toast.makeText(this,
+                    "Save failed: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }

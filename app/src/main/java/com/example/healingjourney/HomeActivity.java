@@ -1,6 +1,7 @@
 package com.example.healingjourney;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -39,16 +40,14 @@ public class HomeActivity extends BaseActivity {
                     });
         }
 
-        // ✅ Quick access buttons
+        // ✅ Start Drawing → goes to Mandala picker first
         btnStartDrawing.setOnClickListener(v ->
-                startActivity(new android.content.Intent(HomeActivity.this, ArtActivity.class)));
+                startActivity(new Intent(HomeActivity.this, MandalaActivity.class)));
 
         btnChatAI.setOnClickListener(v ->
-                startActivity(new android.content.Intent(HomeActivity.this, ChatActivity.class)));
+                startActivity(new Intent(HomeActivity.this, ChatActivity.class)));
 
         btnViewProgress.setOnClickListener(v ->
-                startActivity(new android.content.Intent(HomeActivity.this, ProgressActivity.class)));
-
-
+                startActivity(new Intent(HomeActivity.this, ProgressActivity.class)));
     }
 }

@@ -1,25 +1,29 @@
 package com.example.healingjourney;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DrawingView extends View {
 
     private Paint paint;
+    private Paint mandalaOverlayPaint;
     private Path path;
-    private final ArrayList<Path> paths = new ArrayList<>();
-    private final ArrayList<Paint> paints = new ArrayList<>();
-    private final ArrayList<Path> undonePaths = new ArrayList<>();
-    private final ArrayList<Paint> undonePaints = new ArrayList<>();
+    private ArrayList<Path> paths = new ArrayList<>();
+    private ArrayList<Paint> paints = new ArrayList<>();
+    private ArrayList<Path> undonePaths = new ArrayList<>();
+    private ArrayList<Paint> undonePaints = new ArrayList<>();
 
-    private int currentColor = Color.BLACK;
-    private float strokeWidth = 10f;
-    private boolean isEraser = false;
+    private int currentColor = Color.parseColor("#2E7D32");
+    private float strokeWidth = 30f; // ✅ Bigger default for coloring
+    private Bitmap backgroundBitmap = null;
+
+    public Map<Integer, Integer> colorUsageCount = new HashMap<>();
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -35,18 +39,39 @@ public class DrawingView extends View {
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         path = new Path();
+
+        // ✅ Paint for drawing mandala on top of colors
+        mandalaOverlayPaint = new Paint();
+        mandalaOverlayPaint.setAntiAlias(true);
+        mandalaOverlayPaint.setFilterBitmap(true);
+    }
+
+    public void setBackgroundBitmap(Bitmap bitmap) {
+        this.backgroundBitmap = bitmap;
+        invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        // Step 1: White background
         canvas.drawColor(Color.WHITE);
+
+        // Step 2: Draw color strokes FIRST (below mandala)
         for (int i = 0; i < paths.size(); i++) {
             canvas.drawPath(paths.get(i), paints.get(i));
         }
         canvas.drawPath(path, paint);
+
+        // Step 3: Draw mandala ON TOP so lines stay visible
+        if (backgroundBitmap != null) {
+            canvas.drawBitmap(
+                    backgroundBitmap,
+                    null,
+                    new RectF(0, 0, getWidth(), getHeight()),
+                    mandalaOverlayPaint);
+        }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
@@ -62,6 +87,9 @@ public class DrawingView extends View {
             case MotionEvent.ACTION_UP:
                 paths.add(new Path(path));
                 paints.add(new Paint(paint));
+                if (currentColor != Color.WHITE) {
+                    colorUsageCount.merge(currentColor, 1, Integer::sum);
+                }
                 path.reset();
                 break;
         }
@@ -71,9 +99,10 @@ public class DrawingView extends View {
 
     public void setColor(int color) {
         currentColor = color;
-        isEraser = false;
         paint.setColor(color);
         paint.setStrokeWidth(strokeWidth);
+        // ✅ Wider stroke for coloring feel
+        paint.setStyle(Paint.Style.STROKE);
     }
 
     public void setStrokeWidth(float width) {
@@ -82,9 +111,8 @@ public class DrawingView extends View {
     }
 
     public void setEraser() {
-        isEraser = true;
         paint.setColor(Color.WHITE);
-        paint.setStrokeWidth(40f);
+        paint.setStrokeWidth(60f);
     }
 
     public void undo() {
@@ -108,15 +136,24 @@ public class DrawingView extends View {
         paints.clear();
         undonePaths.clear();
         undonePaints.clear();
+        colorUsageCount.clear();
         path.reset();
         invalidate();
     }
 
     public Bitmap getBitmap() {
-        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(),
-                Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(
+                getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         draw(canvas);
         return bitmap;
+    }
+
+    public int getDominantColor() {
+        if (colorUsageCount.isEmpty()) return Color.GREEN;
+        return colorUsageCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .get()
+                .getKey();
     }
 }

@@ -113,14 +113,14 @@
             android:textSize="20sp"
             android:layout_marginEnd="8dp"/>
 
-        <!-- Brush Size -->
+        <!-- ✅ Updated SeekBar - bigger default brush for coloring -->
         <SeekBar
             android:id="@+id/seekBrushSize"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="50"
-            android:progress="10"
+            android:max="80"
+            android:progress="25"
             android:progressTint="#2E7D32"
             android:thumbTint="#2E7D32"/>
 
@@ -198,4 +198,5 @@
         android:layout_margin="16dp"/>
 
     <include layout="@layout/bottom_nav"/>
+
 </LinearLayout>
