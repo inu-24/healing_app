@@ -70,7 +70,7 @@ public class ArtActivity extends BaseActivity {
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar s, int p, boolean b) {
-                        drawingView.setStrokeWidth(p + 5f);
+                        drawingView.setStrokeWidth(p + 25f);
                     }
                     @Override public void onStartTrackingTouch(SeekBar s) {}
                     @Override public void onStopTrackingTouch(SeekBar s) {}
