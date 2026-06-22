@@ -205,5 +205,6 @@
     <string name="select_a_mandala_to_color">Select a mandala to color 🌸</string>
     <string name="choose_mandala">Choose Mandala 🎨</string>
     <string name="arrow1">←</string>
+    <string name="clear">🪣</string>
 
 </resources>

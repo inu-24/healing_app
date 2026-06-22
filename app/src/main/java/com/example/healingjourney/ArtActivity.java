@@ -16,6 +16,7 @@ public class ArtActivity extends BaseActivity {
     DrawingView drawingView;
     FirebaseAuth mAuth;
     FirebaseFirestore db;
+    TextView btnFill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class ArtActivity extends BaseActivity {
         db = FirebaseFirestore.getInstance();
         drawingView = findViewById(R.id.drawingView);
 
-        // ✅ Load mandala if selected
+        // Load mandala if selected
         int mandalaId = getIntent().getIntExtra("mandalaId", -1);
         if (mandalaId != -1) {
             Bitmap mandala = BitmapFactory.decodeResource(
@@ -41,8 +42,28 @@ public class ArtActivity extends BaseActivity {
         TextView btnUndo = findViewById(R.id.btnUndo);
         TextView btnRedo = findViewById(R.id.btnRedo);
         TextView btnClear = findViewById(R.id.btnClear);
+        btnFill = findViewById(R.id.btnFill);
         SeekBar seekBrushSize = findViewById(R.id.seekBrushSize);
         Button btnAnalyze = findViewById(R.id.btnAnalyzeEmotion);
+
+        // ✅ Default fill mode
+        drawingView.setMode(DrawingView.Mode.FILL);
+        btnFill.setText("🪣");
+
+        // ✅ Toggle Fill / Draw mode
+        btnFill.setOnClickListener(v -> {
+            if (drawingView.getMode() == DrawingView.Mode.FILL) {
+                drawingView.setMode(DrawingView.Mode.DRAW);
+                btnFill.setText("✏️");
+                Toast.makeText(this, "Draw mode ✏️",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                drawingView.setMode(DrawingView.Mode.FILL);
+                btnFill.setText("🪣");
+                Toast.makeText(this, "Fill mode 🪣",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Color buttons
         findViewById(R.id.colorBlack).setOnClickListener(v ->
@@ -76,10 +97,8 @@ public class ArtActivity extends BaseActivity {
                     @Override public void onStopTrackingTouch(SeekBar s) {}
                 });
 
-        // ✅ Save drawing locally + record in Firestore
         btnSave.setOnClickListener(v -> saveDrawingLocally());
 
-        // ✅ Analyze Emotion
         btnAnalyze.setOnClickListener(v -> {
             int dominantColor = drawingView.getDominantColor();
             Intent intent = new Intent(
@@ -103,7 +122,6 @@ public class ArtActivity extends BaseActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
 
-            // Save record to Firestore
             if (mAuth.getCurrentUser() != null) {
                 String userId = mAuth.getCurrentUser().getUid();
                 Map<String, Object> artData = new HashMap<>();

@@ -7,7 +7,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class DrawingView extends View {
 
@@ -20,8 +22,13 @@ public class DrawingView extends View {
     private ArrayList<Paint> undonePaints = new ArrayList<>();
 
     private int currentColor = Color.parseColor("#2E7D32");
-    private float strokeWidth = 30f; // ✅ Bigger default for coloring
+    private float strokeWidth = 30f;
     private Bitmap backgroundBitmap = null;
+    private Bitmap coloringBitmap = null;
+    private Canvas coloringCanvas = null;
+
+    public enum Mode { DRAW, FILL }
+    private Mode currentMode = Mode.FILL;
 
     public Map<Integer, Integer> colorUsageCount = new HashMap<>();
 
@@ -40,7 +47,6 @@ public class DrawingView extends View {
         paint.setStrokeCap(Paint.Cap.ROUND);
         path = new Path();
 
-        // ✅ Paint for drawing mandala on top of colors
         mandalaOverlayPaint = new Paint();
         mandalaOverlayPaint.setAntiAlias(true);
         mandalaOverlayPaint.setFilterBitmap(true);
@@ -51,18 +57,37 @@ public class DrawingView extends View {
         invalidate();
     }
 
+    public void setMode(Mode mode) {
+        this.currentMode = mode;
+    }
+
+    public Mode getMode() {
+        return currentMode;
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        coloringBitmap = Bitmap.createBitmap(w, h,
+                Bitmap.Config.ARGB_8888);
+        coloringCanvas = new Canvas(coloringBitmap);
+        coloringCanvas.drawColor(Color.TRANSPARENT,
+                PorterDuff.Mode.CLEAR);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
-        // Step 1: White background
         canvas.drawColor(Color.WHITE);
 
-        // Step 2: Draw color strokes FIRST (below mandala)
+        if (coloringBitmap != null) {
+            canvas.drawBitmap(coloringBitmap, 0, 0, null);
+        }
+
         for (int i = 0; i < paths.size(); i++) {
             canvas.drawPath(paths.get(i), paints.get(i));
         }
         canvas.drawPath(path, paint);
 
-        // Step 3: Draw mandala ON TOP so lines stay visible
         if (backgroundBitmap != null) {
             canvas.drawBitmap(
                     backgroundBitmap,
@@ -77,31 +102,115 @@ public class DrawingView extends View {
         float x = event.getX();
         float y = event.getY();
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                path.moveTo(x, y);
+        if (currentMode == Mode.FILL) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                new Thread(() -> {
+                    floodFill((int) x, (int) y, currentColor);
+                    colorUsageCount.merge(currentColor, 10, Integer::sum);
+                    post(this::invalidate);
+                }).start();
                 return true;
-            case MotionEvent.ACTION_MOVE:
-                path.lineTo(x, y);
-                break;
-            case MotionEvent.ACTION_UP:
-                paths.add(new Path(path));
-                paints.add(new Paint(paint));
-                if (currentColor != Color.WHITE) {
-                    colorUsageCount.merge(currentColor, 1, Integer::sum);
-                }
-                path.reset();
-                break;
+            }
+        } else {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    path.moveTo(x, y);
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    path.lineTo(x, y);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    paths.add(new Path(path));
+                    paints.add(new Paint(paint));
+                    if (currentColor != Color.WHITE) {
+                        colorUsageCount.merge(currentColor, 1, Integer::sum);
+                    }
+                    path.reset();
+                    break;
+            }
         }
         invalidate();
         return true;
+    }
+
+    private void floodFill(int x, int y, int fillColor) {
+        if (coloringBitmap == null) return;
+
+        int width = coloringBitmap.getWidth();
+        int height = coloringBitmap.getHeight();
+
+        if (x < 0 || x >= width || y < 0 || y >= height) return;
+
+        // Build reference bitmap
+        Bitmap refBitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        Canvas refCanvas = new Canvas(refBitmap);
+        refCanvas.drawColor(Color.WHITE);
+        refCanvas.drawBitmap(coloringBitmap, 0, 0, null);
+        if (backgroundBitmap != null) {
+            refCanvas.drawBitmap(backgroundBitmap, null,
+                    new RectF(0, 0, width, height), null);
+        }
+
+        int targetColor = refBitmap.getPixel(x, y);
+
+        if (isBlackOrDark(targetColor)) return;
+        if (targetColor == fillColor) return;
+
+        int[] refPixels = new int[width * height];
+        refBitmap.getPixels(refPixels, 0, width, 0, 0, width, height);
+
+        int[] colorPixels = new int[width * height];
+        coloringBitmap.getPixels(colorPixels, 0, width, 0, 0, width, height);
+
+        boolean[] visited = new boolean[width * height];
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(y * width + x);
+        visited[y * width + x] = true;
+
+        while (!queue.isEmpty()) {
+            int idx = queue.poll();
+            int cx = idx % width;
+            int cy = idx / width;
+
+            colorPixels[idx] = fillColor;
+
+            int[][] neighbors = {{cx+1,cy},{cx-1,cy},{cx,cy+1},{cx,cy-1}};
+            for (int[] n : neighbors) {
+                int nx = n[0], ny = n[1];
+                if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                int nIdx = ny * width + nx;
+                if (visited[nIdx]) continue;
+                int nColor = refPixels[nIdx];
+                if (isBlackOrDark(nColor)) continue;
+                if (!isSimilarColor(nColor, targetColor)) continue;
+                visited[nIdx] = true;
+                queue.add(nIdx);
+            }
+        }
+
+        coloringBitmap.setPixels(colorPixels, 0, width, 0, 0, width, height);
+        refBitmap.recycle();
+    }
+
+    private boolean isBlackOrDark(int color) {
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        return (r < 80 && g < 80 && b < 80);
+    }
+
+    private boolean isSimilarColor(int c1, int c2) {
+        int rDiff = Math.abs(Color.red(c1) - Color.red(c2));
+        int gDiff = Math.abs(Color.green(c1) - Color.green(c2));
+        int bDiff = Math.abs(Color.blue(c1) - Color.blue(c2));
+        return (rDiff + gDiff + bDiff) < 120;
     }
 
     public void setColor(int color) {
         currentColor = color;
         paint.setColor(color);
         paint.setStrokeWidth(strokeWidth);
-        // ✅ Wider stroke for coloring feel
         paint.setStyle(Paint.Style.STROKE);
     }
 
@@ -111,6 +220,7 @@ public class DrawingView extends View {
     }
 
     public void setEraser() {
+        currentColor = Color.WHITE;
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(60f);
     }
@@ -138,6 +248,9 @@ public class DrawingView extends View {
         undonePaints.clear();
         colorUsageCount.clear();
         path.reset();
+        if (coloringBitmap != null) {
+            coloringBitmap.eraseColor(Color.TRANSPARENT);
+        }
         invalidate();
     }
 

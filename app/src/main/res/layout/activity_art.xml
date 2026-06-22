@@ -113,7 +113,17 @@
             android:textSize="20sp"
             android:layout_marginEnd="8dp"/>
 
-        <!-- ✅ Updated SeekBar - bigger default brush for coloring -->
+        <!-- ✅ Fill/Draw toggle button -->
+        <TextView
+            android:id="@+id/btnFill"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="@string/clear"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Brush Size -->
         <SeekBar
             android:id="@+id/seekBrushSize"
             android:layout_width="0dp"
