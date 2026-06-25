@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.HealingJourney" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.HealingJourney"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary_green</item>
         <item name="colorPrimaryVariant">@color/dark_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/light_green</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="android:statusBarColor">@color/primary_green</item>
+        <!-- ✅ Fix black navigation bar -->
+        <item name="android:navigationBarColor">@color/primary_green</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 </resources>
