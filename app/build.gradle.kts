@@ -5,15 +5,30 @@ plugins {
 
 android {
     namespace = "com.example.healingjourney"
-    compileSdk = 37  // ← Change from 35 to 37
+    compileSdk = 37
+
+    // Enable BuildConfig
+    buildFeatures {
+        buildConfig = true
+    }
+
+    // Read the API key from local.properties
+    val geminiApiKey = project.findProperty("GEMINI_API_KEY") as String? ?: ""
 
     defaultConfig {
         applicationId = "com.example.healingjourney"
         minSdk = 26
-        targetSdk = 37  // ← Change from 35 to 37
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "GEMINI_API_KEY",
+            "\"$geminiApiKey\""
+        )
     }
 
     buildTypes {
@@ -37,13 +52,14 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
 
-    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

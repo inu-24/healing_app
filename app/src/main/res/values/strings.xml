@@ -206,8 +206,8 @@
     <string name="choose_mandala">Choose Mandala 🎨</string>
     <string name="arrow1">←</string>
     <string name="clear">🪣</string>
-    <string name="_0">0🔥</string>
     <string name="zero">0</string>
     <string name="number">0</string>
+    <string name="_0">0🔥</string>
 
 </resources>
