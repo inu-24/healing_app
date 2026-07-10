@@ -57,9 +57,16 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
 
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")  // ← ADD THIS for profile images
 
+    // Image Loading - Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")  // ← ADD THIS
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")  // ← ADD THIS
+
+    // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

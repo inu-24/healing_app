@@ -209,5 +209,16 @@
     <string name="zero">0</string>
     <string name="number">0</string>
     <string name="_0">0🔥</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="tell_us_about_yourself">Tell us about yourself</string>
+    <string name="bio">Bio</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="email">Email</string>
+    <string name="enter_your_full_name">Enter your full name</string>
+    <string name="full_name1">Full Name</string>
+    <string name="change_photo">Change Photo</string>
+    <string name="profile_photo">Profile Photo</string>
+    <string name="back2">Back</string>
+    <string name="edit_profile1">Edit Profile</string>
 
 </resources>
