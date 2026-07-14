@@ -7,8 +7,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class HomeActivity extends BaseActivity {
+
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
+    TextView tvUsername, tvHomeEmotions,
+            tvHomeArtworks, tvHomeStreak,
+            tvLatestEmotion, tvLatestEmoji,
+            tvHomeSessionCount;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -17,37 +26,119 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
         setupBottomNav();
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        TextView tvUsername = findViewById(R.id.tvUsername);
-        Button btnStartDrawing = findViewById(R.id.btnStartDrawing);
-        Button btnChatAI = findViewById(R.id.btnChatAI);
-        Button btnViewProgress = findViewById(R.id.btnViewProgress);
+        tvUsername = findViewById(R.id.tvUsername);
+        tvHomeEmotions = findViewById(R.id.tvHomeEmotions);
+        tvHomeArtworks = findViewById(R.id.tvHomeArtworks);
+        tvHomeStreak = findViewById(R.id.tvHomeStreak);
+        tvLatestEmotion = findViewById(R.id.tvLatestEmotion);
+        tvLatestEmoji = findViewById(R.id.tvLatestEmoji);
+        tvHomeSessionCount =
+                findViewById(R.id.tvHomeSessionCount);
 
-        // Load username from Firestore
+        Button btnStartDrawing =
+                findViewById(R.id.btnStartDrawing);
+        Button btnChatAI =
+                findViewById(R.id.btnChatAI);
+        Button btnViewProgress =
+                findViewById(R.id.btnViewProgress);
+
         if (mAuth.getCurrentUser() != null) {
-            String userId = mAuth.getCurrentUser().getUid();
-            db.collection("users").document(userId)
-                    .get()
-                    .addOnSuccessListener(document -> {
-                        if (document.exists()) {
-                            String name = document.getString("fullName");
-                            if (name != null) {
-                                tvUsername.setText(name + " 🌿");
-                            }
-                        }
-                    });
+            loadUserData();
+            loadRealStats();
+            loadLatestEmotion();
         }
 
-        // ✅ Start Drawing → goes to Mandala picker first
         btnStartDrawing.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, MandalaActivity.class)));
+                startActivity(new Intent(
+                        HomeActivity.this,
+                        MandalaActivity.class)));
 
         btnChatAI.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ChatActivity.class)));
+                startActivity(new Intent(
+                        HomeActivity.this,
+                        ChatActivity.class)));
 
         btnViewProgress.setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ProgressActivity.class)));
+                startActivity(new Intent(
+                        HomeActivity.this,
+                        ProgressActivity.class)));
+    }
+
+    private void loadUserData() {
+        String userId = mAuth.getCurrentUser().getUid();
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc != null && doc.exists()) {
+                        String name =
+                                doc.getString("fullName");
+                        if (name != null && !name.isEmpty())
+                            tvUsername.setText(name + " 🌿");
+                    }
+                });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void loadRealStats() {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        db.collection("emotions")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(snap -> {
+                    int count = snap.size();
+                    tvHomeEmotions.setText(
+                            String.valueOf(count));
+                    tvHomeSessionCount.setText(
+                            String.valueOf(count));
+                    tvHomeStreak.setText(
+                            Math.min(count, 30) + "🔥");
+                });
+
+        db.collection("artworks")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(snap ->
+                        tvHomeArtworks.setText(
+                                String.valueOf(snap.size())));
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void loadLatestEmotion() {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        db.collection("emotions")
+                .whereEqualTo("userId", userId)
+                .orderBy("timestamp",
+                        Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snap -> {
+                    if (!snap.isEmpty()) {
+                        QueryDocumentSnapshot doc =
+                                (QueryDocumentSnapshot)
+                                        snap.getDocuments().get(0);
+                        String emotion =
+                                doc.getString("emotion");
+                        String emoji =
+                                doc.getString("emoji");
+                        if (emotion != null)
+                            tvLatestEmotion.setText(emotion);
+                        if (emoji != null)
+                            tvLatestEmoji.setText(emoji);
+                    } else {
+                        tvLatestEmotion.setText(
+                                "Start your first session!");
+                        tvLatestEmoji.setText("🌱");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    tvLatestEmotion.setText(
+                            "Start your first session!");
+                    tvLatestEmoji.setText("🌱");
+                });
     }
 }
