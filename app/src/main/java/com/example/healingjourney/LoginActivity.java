@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,9 +27,10 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // If already logged in → go to Home
+        // Already logged in → go to Home
         if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(
+                    this, HomeActivity.class));
             finish();
             return;
         }
@@ -37,26 +40,41 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnGoogle = findViewById(R.id.btnGoogle);
         tvRegister = findViewById(R.id.tvRegister);
-        tvForgotPassword = findViewById(R.id.tvForgotPassword);
+        tvForgotPassword =
+                findViewById(R.id.tvForgotPassword);
 
         btnLogin.setOnClickListener(v -> loginUser());
 
+        btnGoogle.setOnClickListener(v ->
+                Toast.makeText(this,
+                        "Google Sign In coming soon! 🚀",
+                        Toast.LENGTH_SHORT).show());
+
         tvRegister.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
+                startActivity(new Intent(
+                        LoginActivity.this,
+                        RegisterActivity.class)));
 
         tvForgotPassword.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
+            String email = etEmail.getText()
+                    .toString().trim();
             if (TextUtils.isEmpty(email)) {
-                Toast.makeText(this,
-                        "Enter your email first",
-                        Toast.LENGTH_SHORT).show();
+                etEmail.setError("Enter your email first");
+                etEmail.requestFocus();
                 return;
             }
             mAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(this,
-                                    "Reset email sent! Check your inbox 📧",
+                                    "Reset email sent! " +
+                                            "Check your inbox 📧",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this,
+                                    "Error: " + task
+                                            .getException()
+                                            .getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -65,24 +83,36 @@ public class LoginActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void loginUser() {
-        String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
+        String email = etEmail.getText()
+                .toString().trim();
+        String password = etPassword.getText()
+                .toString().trim();
 
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Email is required");
+            etEmail.requestFocus();
+            return;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS
+                .matcher(email).matches()) {
+            etEmail.setError("Enter a valid email");
+            etEmail.requestFocus();
             return;
         }
         if (TextUtils.isEmpty(password)) {
             etPassword.setError("Password is required");
+            etPassword.requestFocus();
             return;
         }
         if (password.length() < 6) {
-            etPassword.setError("Password must be at least 6 characters");
+            etPassword.setError(
+                    "Password must be at least 6 characters");
+            etPassword.requestFocus();
             return;
         }
 
         btnLogin.setEnabled(false);
-        btnLogin.setText("Logging in...");
+        btnLogin.setText("Signing in...");
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -95,10 +125,28 @@ public class LoginActivity extends AppCompatActivity {
                                 HomeActivity.class));
                         finish();
                     } else {
-                        Toast.makeText(this,
-                                "Login failed: " +
-                                        task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        String error = task.getException()
+                                != null ?
+                                task.getException().getMessage()
+                                : "Login failed";
+
+                        // User friendly error messages
+                        if (error.contains(
+                                "password is invalid") ||
+                                error.contains("no user")) {
+                            Toast.makeText(this,
+                                    "Incorrect email or password",
+                                    Toast.LENGTH_LONG).show();
+                        } else if (error.contains(
+                                "network")) {
+                            Toast.makeText(this,
+                                    "No internet connection",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this,
+                                    "Login failed: " + error,
+                                    Toast.LENGTH_LONG).show();
+                        }
                         btnLogin.setEnabled(true);
                         btnLogin.setText("Log In");
                     }

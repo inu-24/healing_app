@@ -1,19 +1,21 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
 }
 
+// ✅ Read API key from local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+val geminiApiKey = localProperties["GEMINI_API_KEY"] as String? ?: ""
+
 android {
     namespace = "com.example.healingjourney"
     compileSdk = 37
-
-    // Enable BuildConfig
-    buildFeatures {
-        buildConfig = true
-    }
-
-    // Read the API key from local.properties
-    val geminiApiKey = project.findProperty("GEMINI_API_KEY") as String? ?: ""
 
     defaultConfig {
         applicationId = "com.example.healingjourney"
@@ -21,9 +23,10 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner =
+            "androidx.test.runner.AndroidJUnitRunner"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
+        // ✅ Inject API key into BuildConfig
         buildConfigField(
             "String",
             "GEMINI_API_KEY",
@@ -31,11 +34,16 @@ android {
         )
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
+                getDefaultProguardFile(
+                    "proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
@@ -52,21 +60,16 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation(platform(
+        "com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage")  // ← ADD THIS for profile images
 
-    // Image Loading - Glide
-    implementation("com.github.bumptech.glide:glide:4.16.0")  // ← ADD THIS
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")  // ← ADD THIS
-
-    // Networking
+    // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
