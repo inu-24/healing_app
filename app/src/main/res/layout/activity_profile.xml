@@ -20,7 +20,7 @@
             android:id="@+id/btnBack"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:contentDescription="@string/todo3"
+            android:contentDescription="@string/back6"
             android:src="@drawable/baseline_arrow_back_ios_24"
             android:layout_marginEnd="12dp"/>
 
@@ -28,16 +28,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/my_profile"
+            android:text="@string/my_profile6"
             android:textColor="#1A1A1A"
             android:textSize="15sp"
             android:textStyle="bold"
             android:gravity="center"/>
 
         <ImageView
+            android:id="@+id/btnSettings"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:contentDescription="@string/todo2"
+            android:contentDescription="@string/settings4"
             android:src="@drawable/baseline_settings_24"/>
 
     </LinearLayout>
@@ -50,52 +51,78 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-            <!-- Profile Header -->
+            <!-- Profile Header Panel -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:padding="24dp"
-                android:background="#FFFFFF">
+                android:background="@drawable/bg_header_panel"
+                android:padding="28dp">
 
-                <ImageView
-                    android:id="@+id/ivProfilePhoto"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:contentDescription="@string/todo4"
-                    android:src="@mipmap/ic_launcher_round"
-                    android:background="@drawable/circle_light_green"/>
+                <FrameLayout
+                    android:layout_width="88dp"
+                    android:layout_height="88dp">
+
+                    <ImageView
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:background="@drawable/bg_avatar_ring"
+                        android:padding="4dp"
+                        android:contentDescription="@string/profile_photo_frame4"/>
+
+                    <ImageView
+                        android:id="@+id/ivProfilePhoto"
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/profile_photo6"
+                        android:src="@mipmap/ic_launcher_round"
+                        android:background="@drawable/circle_light_green"
+                        android:scaleType="centerCrop"
+                        android:clipToOutline="true"/>
+
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/inuli1"
+                    android:text=""
                     android:textColor="#1A1A1A"
-                    android:textSize="18sp"
+                    android:textSize="19sp"
                     android:textStyle="bold"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="14dp"
+                    tools:text="Ron"/>
 
                 <TextView
+                    android:id="@+id/tvJoinDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/healing_since_jan_2025"
-                    android:textColor="#888888"
+                    android:text=""
+                    android:textColor="#5C8A5F"
                     android:textSize="13sp"
-                    android:layout_marginTop="4dp"/>
+                    android:layout_marginTop="2dp"
+                    tools:text="Healing since Jan 2025"/>
 
                 <Button
                     android:id="@+id/btnEditProfile"
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="@string/edit_profile"
-                    android:textColor="#2E7D32"
-                    android:backgroundTint="#E8F5E9"
+                    android:layout_height="42dp"
+                    android:text="@string/edit_profile6"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_button_solid"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
                     android:textSize="13sp"
-                    android:layout_marginTop="12dp"/>
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:elevation="0dp"
+                    android:stateListAnimator="@null"
+                    android:layout_marginTop="16dp"/>
 
             </LinearLayout>
 
@@ -104,49 +131,53 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/card_shadow"
-                android:padding="16dp"
+                android:background="@drawable/bg_card_rounded"
+                android:elevation="2dp"
+                android:padding="18dp"
                 android:layout_margin="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/mood_this_week"
+                    android:text="@string/mood_this_week4"
                     android:textColor="#1A1A1A"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="14dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="16dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:background="#F7F9F7"
-                        android:padding="10dp"
+                        android:background="@drawable/bg_stat_box"
+                        android:padding="14dp"
                         android:layout_marginEnd="8dp">
 
                         <TextView
+                            android:id="@+id/tvCheckInsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_12"
-                            android:textColor="#2E7D32"
-                            android:textSize="22sp"
-                            android:textStyle="bold"/>
+                            android:text="@string/_05"
+                            android:textColor="#1B5E20"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:text="12"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/check_ins_logged"
-                            android:textColor="#888888"
-                            android:textSize="11sp"/>
+                            android:text="@string/check_ins_logged4"
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp"/>
 
                     </LinearLayout>
 
@@ -155,43 +186,48 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:background="#F7F9F7"
-                        android:padding="10dp">
+                        android:background="@drawable/bg_stat_box"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:id="@+id/tvGoodMoodDays"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/_04"
+                            android:textColor="#1B5E20"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:text="7"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_7"
-                            android:textColor="#2E7D32"
-                            android:textSize="22sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/good_mood_days"
-                            android:textColor="#888888"
-                            android:textSize="11sp"/>
+                            android:text="@string/good_mood_days3"
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp"/>
 
                     </LinearLayout>
 
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvMostFrequentMood"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/most_frequent_mood"
+                    android:text="@string/most_frequent_mood2"
                     android:textColor="#888888"
                     android:textSize="11sp"
-                    android:layout_marginBottom="6dp"/>
+                    android:layout_marginBottom="8dp"
+                    tools:text="Most frequent mood: Calm (70%)"/>
 
                 <ProgressBar
+                    android:id="@+id/progressMood"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="14dp"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:progress="70"
-                    android:progressTint="#4CAF50"
-                    android:progressBackgroundTint="#E8F5E9"/>
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_mood_rounded"/>
 
             </LinearLayout>
 
@@ -200,8 +236,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/card_shadow"
-                android:padding="16dp"
+                android:background="@drawable/bg_card_rounded"
+                android:elevation="2dp"
+                android:padding="18dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp">
@@ -209,97 +246,111 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/achievements"
+                    android:text="@string/achievements4"
                     android:textColor="#1A1A1A"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="14dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="10dp">
 
+                    <!-- First Steps -->
                     <LinearLayout
+                        android:id="@+id/badgeFirstSteps"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:background="#E8F5E9"
-                        android:padding="10dp"
-                        android:gravity="center_vertical"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_badge_earned"
+                        android:padding="14dp"
                         android:layout_marginEnd="8dp">
 
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp">
+                            <ImageView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_icon_chip"
+                                android:contentDescription="@string/badge_icon_background4"/>
+                            <TextView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:text="@string/Tr"
+                                android:textSize="18sp"
+                                android:gravity="center"/>
+                        </FrameLayout>
+
                         <TextView
+                            android:id="@+id/tvFirstStepsTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/tree"
-                            android:textSize="18sp"
-                            android:layout_marginEnd="8dp"/>
+                            android:text="@string/first_steps5"
+                            android:textColor="#1B5E20"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="10dp"/>
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/tvFirstStepsSubtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/first_steps"
-                                android:textColor="#2E7D32"
-                                android:textSize="12sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/first_check_in"
-                                android:textColor="#4CAF50"
-                                android:textSize="11sp"/>
-
-                        </LinearLayout>
+                            android:text="@string/first_check_in3"
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="1dp"/>
 
                     </LinearLayout>
 
+                    <!-- Artist -->
                     <LinearLayout
+                        android:id="@+id/badgeArtist"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:background="#E8F5E9"
-                        android:padding="10dp"
-                        android:gravity="center_vertical">
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_badge_earned"
+                        android:padding="14dp">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp">
+                            <ImageView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_icon_chip"
+                                android:contentDescription="@string/badge_icon_background3"/>
+                            <TextView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:text="@string/B"
+                                android:textSize="18sp"
+                                android:gravity="center"/>
+                        </FrameLayout>
 
                         <TextView
+                            android:id="@+id/tvArtistTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/art2"
-                            android:textSize="18sp"
-                            android:layout_marginEnd="8dp"/>
+                            android:text="@string/ARt"
+                            android:textColor="#1B5E20"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="10dp"/>
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/tvArtistSubtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/artist"
-                                android:textColor="#2E7D32"
-                                android:textSize="12sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/_5_artworks"
-                                android:textColor="#4CAF50"
-                                android:textSize="11sp"/>
-
-                        </LinearLayout>
+                            android:text="@string/AW"
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="1dp"/>
 
                     </LinearLayout>
 
@@ -311,84 +362,98 @@
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 
+                    <!-- Current streak -->
                     <LinearLayout
+                        android:id="@+id/badgeStreak"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:background="#E8F5E9"
-                        android:padding="10dp"
-                        android:gravity="center_vertical"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_badge_earned"
+                        android:padding="14dp"
                         android:layout_marginEnd="8dp">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp">
+                            <ImageView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_icon_chip"
+                                android:contentDescription="@string/badge_icon_background2"/>
+                            <TextView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:text="@string/FI"
+                                android:textSize="18sp"
+                                android:gravity="center"/>
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvStreakTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/_0_day_streak3"
+                            android:textColor="#1B5E20"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="10dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/fire"
-                            android:textSize="18sp"
-                            android:layout_marginEnd="8dp"/>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/_3_day_streak"
-                                android:textColor="#2E7D32"
-                                android:textSize="12sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/keep_going"
-                                android:textColor="#4CAF50"
-                                android:textSize="11sp"/>
-
-                        </LinearLayout>
+                            android:text="@string/keep_going3"
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="1dp"/>
 
                     </LinearLayout>
 
+                    <!-- 7-day streak goal, locks/unlocks -->
                     <LinearLayout
+                        android:id="@+id/badgeSevenDay"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:background="#F7F9F7"
-                        android:padding="10dp"
-                        android:gravity="center_vertical">
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_badge_locked"
+                        android:padding="14dp">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp">
+                            <ImageView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:background="@drawable/bg_icon_chip"
+                                android:contentDescription="@string/badge_icon_background"/>
+                            <TextView
+                                android:id="@+id/tvSevenDayIcon"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:text="@string/LO"
+                                android:textSize="18sp"
+                                android:gravity="center"/>
+                        </FrameLayout>
 
                         <TextView
+                            android:id="@+id/tvSevenDayTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/lock"
-                            android:textSize="18sp"
-                            android:layout_marginEnd="8dp"/>
+                            android:text="@string/_7_day_streak3"
+                            android:textColor="#888888"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="10dp"/>
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/tvSevenDaySubtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/_7_day_streak"
-                                android:textColor="#888888"
-                                android:textSize="12sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/_4_more_days"
-                                android:textColor="#AAAAAA"
-                                android:textSize="11sp"/>
-
-                        </LinearLayout>
+                            android:text="@string/_7_more_days3"
+                            android:textColor="#AAAAAA"
+                            android:textSize="11sp"
+                            android:layout_marginTop="1dp"/>
 
                     </LinearLayout>
 
@@ -402,17 +467,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/card_background"
+                android:background="@drawable/bg_logout_rounded"
+                android:elevation="1dp"
                 android:padding="16dp"
                 android:gravity="center_vertical"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginEnd="16dp">
 
                 <TextView
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:text="@string/no"
+                    android:text="@string/OUT"
                     android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/circle_red"
@@ -422,7 +487,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/log_out"
+                    android:text="@string/log_out3"
                     android:textColor="#C62828"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -441,32 +506,32 @@
         android:background="#FFFFFF">
 
         <LinearLayout android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/home2" android:textSize="20sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/home3" android:textColor="#A5D6A7" android:textSize="10sp"
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/HM" android:textSize="20sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/home6" android:textColor="#A5D6A7" android:textSize="10sp"
                 tools:ignore="SmallSp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navArt" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/art4" android:textSize="20sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/art3" android:textColor="#A5D6A7" android:textSize="10sp"
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/DRAW" android:textSize="20sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ART1" android:textColor="#A5D6A7" android:textSize="10sp"
                 tools:ignore="SmallSp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navProgress" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/type" android:textSize="20sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/progress1" android:textColor="#A5D6A7" android:textSize="10sp"
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/PRO" android:textSize="20sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/progress5" android:textColor="#A5D6A7" android:textSize="10sp"
                 tools:ignore="SmallSp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navChat" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/msg" android:textSize="20sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/chat2" android:textColor="#A5D6A7" android:textSize="10sp"
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/CHAT1" android:textSize="20sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/chat5" android:textColor="#A5D6A7" android:textSize="10sp"
                 tools:ignore="SmallSp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="#F7F9F7">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/user1" android:textSize="20sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile1" android:textColor="#2E7D32" android:textSize="10sp" android:textStyle="bold"
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/User" android:textSize="20sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile5" android:textColor="#2E7D32" android:textSize="10sp" android:textStyle="bold"
                 tools:ignore="SmallSp" />
         </LinearLayout>
 

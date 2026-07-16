@@ -3,59 +3,88 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1B5E20"
+    android:background="@drawable/bg_splash_gradient"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="32dp">
 
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:contentDescription="@string/todo"
-        android:src="@mipmap/ic_launcher"
-        android:layout_marginBottom="24dp"/>
+    <FrameLayout
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginBottom="28dp">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:background="@drawable/bg_logo_frame"
+            android:contentDescription="Logo frame"/>
+
+        <ImageView
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:layout_gravity="center"
+            android:contentDescription="Healing Journey logo"
+            android:src="@mipmap/ic_launcher"/>
+
+    </FrameLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/healing_journey"
+        android:text="Healing Journey"
         android:textColor="#FFFFFF"
-        android:textSize="28sp"
-        android:textStyle="bold"/>
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.01"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ai_powered_art_therapy"
-        android:textColor="#A5D6A7"
-        android:textSize="14sp"
-        android:layout_marginTop="8dp"/>
+        android:text="AI-POWERED ART THERAPY"
+        android:textColor="#EAF7EA"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.12"
+        android:background="@drawable/bg_tag_pill"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_marginTop="12dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:text="@string/explore_your_emotions_through_nai_it_listens_understands_nand_supports_you"
+        android:text="Explore your emotions through AI. It listens, understands, and supports you."
         android:textColor="#C8E6C9"
         android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
         android:gravity="center"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="20dp"/>
 
     <Button
         android:id="@+id/btnGetStarted"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="@string/get_started"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="Get Started"
         android:textColor="#1B5E20"
-        android:backgroundTint="#FFFFFF"
-        android:layout_marginTop="40dp"
-        android:textStyle="bold"/>
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:background="@drawable/bg_button_white_pill"
+        android:elevation="4dp"
+        android:stateListAnimator="@null"
+        android:layout_marginTop="40dp"/>
 
     <TextView
+        android:id="@+id/tvSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/already_have_an_account_sign_in"
-        android:textColor="#A5D6A7"
+        android:text="Already have an account? Sign in"
+        android:textColor="#FFFFFF"
         android:textSize="13sp"
-        android:layout_marginTop="16dp"/>
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:layout_marginTop="12dp"/>
 
 </LinearLayout>
