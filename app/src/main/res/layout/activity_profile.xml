@@ -462,22 +462,28 @@
             </LinearLayout>
 
             <!-- Logout Button -->
+
             <LinearLayout
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/bg_logout_rounded"
+                android:background="#FFFFFF"
                 android:elevation="1dp"
                 android:padding="16dp"
                 android:gravity="center_vertical"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:backgroundTint="#FFFFFF">
 
                 <TextView
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:text="@string/OUT"
+                    android:text="🚪"
                     android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/circle_red"
@@ -487,7 +493,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/log_out3"
+                    android:text="Logout"
                     android:textColor="#C62828"
                     android:textSize="14sp"
                     android:textStyle="bold"/>

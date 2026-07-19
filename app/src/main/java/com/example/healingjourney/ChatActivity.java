@@ -20,12 +20,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Response;
 
 public class ChatActivity extends BaseActivity {
@@ -37,30 +37,44 @@ public class ChatActivity extends BaseActivity {
     private OkHttpClient client;
     private Handler mainHandler;
 
-    // Read API key from BuildConfig
+    // ✅ Use BuildConfig to inject API key securely
     private static final String API_KEY = BuildConfig.GEMINI_API_KEY;
 
+    // ✅ Working model
     private static final String API_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
-                    + API_KEY;
+            "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
 
+    // ✅ NLP System Prompt - Mental health context
     private static final String SYSTEM_PROMPT =
-            "You are a compassionate mental health support assistant " +
-                    "called Healing Bot in the Healing Journey app. " +
-                    "Your role is to provide emotional support, " +
-                    "encourage art therapy, and help users express " +
-                    "their feelings. Always be warm, empathetic and " +
-                    "supportive. Keep responses concise (2-3 sentences). " +
-                    "If someone seems in crisis, encourage professional help.";
+            "You are Healing Bot, a compassionate AI " +
+                    "mental health assistant in the Healing " +
+                    "Journey app that uses art therapy. " +
+                    "You use Natural Language Processing (NLP) " +
+                    "to understand users emotions from their " +
+                    "text. Your role is to: " +
+                    "1. Listen and provide emotional support. " +
+                    "2. Identify emotional distress from language. " +
+                    "3. Encourage art therapy and mandala coloring. " +
+                    "4. Give warm, empathetic responses. " +
+                    "5. Keep responses to 2-3 sentences. " +
+                    "6. If crisis detected, suggest professional help. " +
+                    "Always respond in a caring, supportive way.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
         setupBottomNav();
 
-        // Initialize OkHttpClient
+        // Check if API key is set
+        if (API_KEY.isEmpty() || API_KEY.equals("YOUR_API_KEY_HERE")) {
+            Toast.makeText(this,
+                    "Please set your Gemini API key in local.properties",
+                    Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -69,129 +83,151 @@ public class ChatActivity extends BaseActivity {
 
         mainHandler = new Handler(Looper.getMainLooper());
 
-        // Initialize views
         chatContainer = findViewById(R.id.chatContainer);
         scrollChat = findViewById(R.id.scrollChat);
         etMessage = findViewById(R.id.etMessage);
-
         TextView btnBack = findViewById(R.id.btnBack);
         ImageView btnSend = findViewById(R.id.btnSend);
 
         btnBack.setOnClickListener(v -> finish());
 
-        // Add welcome message
-        addAIMessage("Hi! 💚 How are you feeling today? I'm here to listen and support you.");
+        // ✅ Welcome message
+        addAIMessage("Hi! 💚 How are you feeling today? " +
+                "I'm here to listen and support you " +
+                "on your healing journey. 🌿");
 
         btnSend.setOnClickListener(v -> {
-            String message = etMessage.getText().toString().trim();
+            String message = etMessage.getText()
+                    .toString().trim();
             if (!message.isEmpty()) {
                 addUserMessage(message);
                 etMessage.setText("");
                 addTypingIndicator();
                 callGeminiAPI(message);
             } else {
-                Toast.makeText(this, "Please enter a message", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        "Please type a message",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void callGeminiAPI(String userMessage) {
-        // Check if API key is empty
-        if (API_KEY.isEmpty() || API_KEY.equals("")) {
-            removeTypingIndicator();
-            addAIMessage("⚠️ API key is not configured. Please add your Gemini API key to local.properties file.");
-            return;
-        }
-
         try {
-            // Build the request body
-            JSONObject textPart = new JSONObject();
-            textPart.put("text", SYSTEM_PROMPT + "\n\nUser: " + userMessage);
+            // ✅ Build NLP request
+            JSONObject systemPart = new JSONObject();
+            systemPart.put("text", SYSTEM_PROMPT);
 
-            JSONArray parts = new JSONArray();
-            parts.put(textPart);
+            JSONObject systemContent = new JSONObject();
+            systemContent.put("role", "user");
+            JSONArray systemParts = new JSONArray();
+            systemParts.put(systemPart);
+            systemContent.put("parts", systemParts);
 
-            JSONObject content = new JSONObject();
-            content.put("parts", parts);
+            JSONObject modelAck = new JSONObject();
+            modelAck.put("role", "model");
+            JSONArray modelParts = new JSONArray();
+            JSONObject modelPart = new JSONObject();
+            modelPart.put("text",
+                    "I understand. I'm Healing Bot, " +
+                            "here to support you with " +
+                            "empathy and care. 💚");
+            modelParts.put(modelPart);
+            modelAck.put("parts", modelParts);
+
+            JSONObject userContent = new JSONObject();
+            userContent.put("role", "user");
+            JSONArray userParts = new JSONArray();
+            JSONObject userPart = new JSONObject();
+            userPart.put("text", userMessage);
+            userParts.put(userPart);
+            userContent.put("parts", userParts);
 
             JSONArray contents = new JSONArray();
-            contents.put(content);
+            contents.put(systemContent);
+            contents.put(modelAck);
+            contents.put(userContent);
+
+            JSONObject generationConfig = new JSONObject();
+            generationConfig.put("temperature", 0.8);
+            generationConfig.put("maxOutputTokens", 250);
+            generationConfig.put("topP", 0.9);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("contents", contents);
+            requestBody.put("generationConfig",
+                    generationConfig);
 
-            // Create request body
             RequestBody body = RequestBody.create(
                     requestBody.toString(),
-                    MediaType.get("application/json; charset=utf-8")
-            );
+                    MediaType.get(
+                            "application/json; charset=utf-8"));
 
-            // Build request
             Request request = new Request.Builder()
                     .url(API_URL)
                     .post(body)
-                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Content-Type",
+                            "application/json")
                     .build();
 
-            // Execute request asynchronously
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    mainHandler.post(() -> {
-                        removeTypingIndicator();
-                        addAIMessage("⚠️ Connection failed. Please check your internet connection.");
-                        e.printStackTrace();
-                    });
-                }
+            client.newCall(request).enqueue(
+                    new Callback() {
+                        @Override
+                        public void onFailure(
+                                Call call, IOException e) {
+                            mainHandler.post(() -> {
+                                removeTypingIndicator();
+                                addAIMessage(
+                                        "⚠️ Connection failed. " +
+                                                "Please check your " +
+                                                "internet connection.");
+                            });
+                        }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String responseBody = response.body().string();
+                        @Override
+                        public void onResponse(
+                                Call call,
+                                Response response)
+                                throws IOException {
+                            String responseBody =
+                                    response.body().string();
+                            mainHandler.post(() -> {
+                                removeTypingIndicator();
+                                try {
+                                    JSONObject json =
+                                            new JSONObject(
+                                                    responseBody);
 
-                    mainHandler.post(() -> {
-                        removeTypingIndicator();
+                                    if (json.has("error")) {
+                                        String errMsg = json
+                                                .getJSONObject("error")
+                                                .getString("message");
+                                        addAIMessage(
+                                                "⚠️ " + errMsg);
+                                        return;
+                                    }
 
-                        try {
-                            JSONObject json = new JSONObject(responseBody);
+                                    String reply = json
+                                            .getJSONArray("candidates")
+                                            .getJSONObject(0)
+                                            .getJSONObject("content")
+                                            .getJSONArray("parts")
+                                            .getJSONObject(0)
+                                            .getString("text");
 
-                            // Check for error
-                            if (json.has("error")) {
-                                JSONObject errorObj = json.getJSONObject("error");
-                                String errorMessage = errorObj.getString("message");
+                                    addAIMessage(reply.trim());
 
-                                // Check for specific API key error
-                                if (errorMessage.contains("API key") || errorMessage.contains("key")) {
-                                    addAIMessage("⚠️ Invalid API key. Please check your Gemini API key in local.properties.");
-                                } else {
-                                    addAIMessage("⚠️ Error: " + errorMessage);
+                                } catch (Exception e) {
+                                    addAIMessage(
+                                            "⚠️ Error processing " +
+                                                    "response. Please " +
+                                                    "try again.");
                                 }
-                                return;
-                            }
-
-                            // Parse the response
-                            JSONArray candidates = json.getJSONArray("candidates");
-                            if (candidates.length() > 0) {
-                                JSONObject candidate = candidates.getJSONObject(0);
-                                JSONObject contentObj = candidate.getJSONObject("content");
-                                JSONArray partsArray = contentObj.getJSONArray("parts");
-                                JSONObject part = partsArray.getJSONObject(0);
-                                String reply = part.getString("text");
-
-                                addAIMessage(reply);
-                            } else {
-                                addAIMessage("⚠️ No response received. Please try again.");
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            addAIMessage("⚠️ Unable to process server response. Please try again.");
+                            });
                         }
                     });
-                }
-            });
 
         } catch (Exception e) {
-            e.printStackTrace();
             removeTypingIndicator();
             addAIMessage("⚠️ Error: " + e.getMessage());
         }
@@ -209,8 +245,8 @@ public class ChatActivity extends BaseActivity {
         wrapper.setGravity(Gravity.END);
         wrapper.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT
-        ));
+                LayoutParams.WRAP_CONTENT));
+        wrapper.setPadding(0, 0, 0, 16);
         wrapper.addView(tv);
 
         chatContainer.addView(wrapper);
@@ -218,51 +254,84 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void addAIMessage(String message) {
+        LinearLayout msgLayout = new LinearLayout(this);
+        msgLayout.setOrientation(
+                LinearLayout.HORIZONTAL);
+        msgLayout.setLayoutParams(new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT));
+        msgLayout.setGravity(Gravity.START);
+        msgLayout.setPadding(0, 0, 0, 16);
+
+        ImageView avatar = new ImageView(this);
+        avatar.setImageResource(
+                R.mipmap.ic_launcher_round);
+        LayoutParams avatarParams =
+                new LayoutParams(40, 40);
+        avatarParams.setMargins(0, 8, 8, 0);
+        avatar.setLayoutParams(avatarParams);
+        msgLayout.addView(avatar);
+
         TextView tv = new TextView(this);
         tv.setText(message);
         tv.setTextColor(Color.parseColor("#1B5E20"));
         tv.setTextSize(14);
         tv.setPadding(32, 24, 32, 24);
         tv.setBackgroundResource(R.drawable.bubble_ai);
+        tv.setMaxWidth(700);
 
-        LinearLayout wrapper = new LinearLayout(this);
-        wrapper.setGravity(Gravity.START);
-        wrapper.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT
-        ));
-        wrapper.addView(tv);
+        LinearLayout textWrapper =
+                new LinearLayout(this);
+        textWrapper.setLayoutParams(new LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT));
+        textWrapper.addView(tv);
+        msgLayout.addView(textWrapper);
 
-        chatContainer.addView(wrapper);
+        chatContainer.addView(msgLayout);
         scrollToBottom();
     }
 
     @SuppressLint("SetTextI18n")
     private void addTypingIndicator() {
+        LinearLayout wrapper = new LinearLayout(this);
+        wrapper.setOrientation(
+                LinearLayout.HORIZONTAL);
+        wrapper.setGravity(Gravity.START);
+        wrapper.setLayoutParams(new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT));
+        wrapper.setTag("typing_wrapper");
+        wrapper.setPadding(0, 0, 0, 16);
+
+        ImageView avatar = new ImageView(this);
+        avatar.setImageResource(
+                R.mipmap.ic_launcher_round);
+        LayoutParams avatarParams =
+                new LayoutParams(40, 40);
+        avatarParams.setMargins(0, 8, 8, 0);
+        avatar.setLayoutParams(avatarParams);
+        wrapper.addView(avatar);
+
         TextView tv = new TextView(this);
         tv.setText("Healing Bot is typing... 💚");
         tv.setTextColor(Color.parseColor("#4CAF50"));
         tv.setTextSize(12);
         tv.setPadding(32, 16, 32, 16);
-        tv.setTag("typing_indicator");
-
-        LinearLayout wrapper = new LinearLayout(this);
-        wrapper.setGravity(Gravity.START);
-        wrapper.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT
-        ));
+        tv.setBackgroundResource(R.drawable.bubble_ai);
         wrapper.addView(tv);
-        wrapper.setTag("typing_wrapper");
 
         chatContainer.addView(wrapper);
         scrollToBottom();
     }
 
     private void removeTypingIndicator() {
-        for (int i = chatContainer.getChildCount() - 1; i >= 0; i--) {
-            Object tag = chatContainer.getChildAt(i).getTag();
-            if (tag != null && tag.toString().equals("typing_wrapper")) {
+        for (int i = chatContainer.getChildCount() - 1;
+             i >= 0; i--) {
+            Object tag = chatContainer
+                    .getChildAt(i).getTag();
+            if (tag != null &&
+                    tag.toString().equals("typing_wrapper")) {
                 chatContainer.removeViewAt(i);
                 break;
             }
@@ -271,7 +340,7 @@ public class ChatActivity extends BaseActivity {
 
     private void scrollToBottom() {
         scrollChat.post(() ->
-                scrollChat.fullScroll(ScrollView.FOCUS_DOWN)
-        );
+                scrollChat.fullScroll(
+                        ScrollView.FOCUS_DOWN));
     }
 }
