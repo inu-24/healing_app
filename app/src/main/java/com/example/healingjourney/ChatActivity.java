@@ -1,23 +1,27 @@
 package com.example.healingjourney;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -30,317 +34,360 @@ import okhttp3.Response;
 
 public class ChatActivity extends BaseActivity {
 
+
+    private static final String API_URL =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
+    private static final String API_KEY = BuildConfig.GEMINI_API_KEY;
+
+    private static final String SYSTEM_PROMPT =
+            "You are Healing Bot, a warm, supportive companion inside a wellness app. " +
+                    "You listen carefully, validate feelings, and suggest helpful coping methods " +
+                    "such as art therapy and breathing exercises. " +
+                    "You are not a therapist and cannot diagnose conditions. " +
+                    "If someone is in crisis, encourage them to contact emergency support. " +
+                    "Keep replies concise and conversational.";
+
     private LinearLayout chatContainer;
     private ScrollView scrollChat;
     private EditText etMessage;
+    private ImageView btnSend;
+    private TextView btnBack;
 
-    private OkHttpClient client;
-    private Handler mainHandler;
+    private final OkHttpClient httpClient = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build();
 
-    // ✅ Use BuildConfig to inject API key securely
-    private static final String API_KEY = BuildConfig.GEMINI_API_KEY;
-
-    // ✅ Working model
-    private static final String API_URL =
-            "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
-
-    // ✅ NLP System Prompt - Mental health context
-    private static final String SYSTEM_PROMPT =
-            "You are Healing Bot, a compassionate AI " +
-                    "mental health assistant in the Healing " +
-                    "Journey app that uses art therapy. " +
-                    "You use Natural Language Processing (NLP) " +
-                    "to understand users emotions from their " +
-                    "text. Your role is to: " +
-                    "1. Listen and provide emotional support. " +
-                    "2. Identify emotional distress from language. " +
-                    "3. Encourage art therapy and mandala coloring. " +
-                    "4. Give warm, empathetic responses. " +
-                    "5. Keep responses to 2-3 sentences. " +
-                    "6. If crisis detected, suggest professional help. " +
-                    "Always respond in a caring, supportive way.";
+    // Keeps the running conversation so the model has context
+    private final List<JSONObject> conversationHistory = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
         setupBottomNav();
-
-        // Check if API key is set
-        if (API_KEY.isEmpty() || API_KEY.equals("YOUR_API_KEY_HERE")) {
-            Toast.makeText(this,
-                    "Please set your Gemini API key in local.properties",
-                    Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-        mainHandler = new Handler(Looper.getMainLooper());
 
         chatContainer = findViewById(R.id.chatContainer);
         scrollChat = findViewById(R.id.scrollChat);
         etMessage = findViewById(R.id.etMessage);
-        TextView btnBack = findViewById(R.id.btnBack);
-        ImageView btnSend = findViewById(R.id.btnSend);
+        btnSend = findViewById(R.id.btnSend);
+        btnBack = findViewById(R.id.btnBack);
 
         btnBack.setOnClickListener(v -> finish());
 
-        // ✅ Welcome message
-        addAIMessage("Hi! 💚 How are you feeling today? " +
-                "I'm here to listen and support you " +
-                "on your healing journey. 🌿");
-
         btnSend.setOnClickListener(v -> {
-            String message = etMessage.getText()
-                    .toString().trim();
-            if (!message.isEmpty()) {
-                addUserMessage(message);
-                etMessage.setText("");
-                addTypingIndicator();
-                callGeminiAPI(message);
-            } else {
-                Toast.makeText(this,
-                        "Please type a message",
-                        Toast.LENGTH_SHORT).show();
-            }
+            String text = etMessage.getText().toString().trim();
+            if (TextUtils.isEmpty(text)) return;
+
+            addMessageBubble(text, true);
+            etMessage.setText("");
+            sendToGemini(text);
+
         });
+
+        // Optional buttons already in your layout
+        View btnSaveCanvas = findViewById(R.id.btnSaveCanvas);
+        View btnTryExercise = findViewById(R.id.btnTryExercise);
+        if (btnSaveCanvas != null) {
+            btnSaveCanvas.setOnClickListener(v ->
+                    Toast.makeText(this, "Saved to canvas", Toast.LENGTH_SHORT).show());
+        }
+        if (btnTryExercise != null) {
+            btnTryExercise.setOnClickListener(v ->
+                    addMessageBubble("Let's try a breathing exercise: breathe in for 4 seconds, " +
+                            "hold for 4, and out for 6. Repeat that five times.", false));
+        }
     }
 
-    private void callGeminiAPI(String userMessage) {
+    /** Sends the user's message + full history to Claude and appends the reply when it arrives. */
+    private void sendToGemini(String userText) {
+
         try {
-            // ✅ Build NLP request
-            JSONObject systemPart = new JSONObject();
-            systemPart.put("text", SYSTEM_PROMPT);
 
-            JSONObject systemContent = new JSONObject();
-            systemContent.put("role", "user");
-            JSONArray systemParts = new JSONArray();
-            systemParts.put(systemPart);
-            systemContent.put("parts", systemParts);
+            JSONObject userMsg = new JSONObject();
+            userMsg.put("role", "user");
+            userMsg.put("content", userText);
 
-            JSONObject modelAck = new JSONObject();
-            modelAck.put("role", "model");
-            JSONArray modelParts = new JSONArray();
-            JSONObject modelPart = new JSONObject();
-            modelPart.put("text",
-                    "I understand. I'm Healing Bot, " +
-                            "here to support you with " +
-                            "empathy and care. 💚");
-            modelParts.put(modelPart);
-            modelAck.put("parts", modelParts);
+            conversationHistory.add(userMsg);
 
-            JSONObject userContent = new JSONObject();
-            userContent.put("role", "user");
-            JSONArray userParts = new JSONArray();
-            JSONObject userPart = new JSONObject();
-            userPart.put("text", userMessage);
-            userParts.put(userPart);
-            userContent.put("parts", userParts);
+
+
+            JSONObject body = new JSONObject();
 
             JSONArray contents = new JSONArray();
+
+
+
+            // Add system prompt
+            JSONObject systemContent = new JSONObject();
+            JSONArray systemParts = new JSONArray();
+
+            JSONObject systemText = new JSONObject();
+            systemText.put("text", SYSTEM_PROMPT);
+
+            systemParts.put(systemText);
+            systemContent.put("parts", systemParts);
+
             contents.put(systemContent);
-            contents.put(modelAck);
-            contents.put(userContent);
 
-            JSONObject generationConfig = new JSONObject();
-            generationConfig.put("temperature", 0.8);
-            generationConfig.put("maxOutputTokens", 250);
-            generationConfig.put("topP", 0.9);
 
-            JSONObject requestBody = new JSONObject();
-            requestBody.put("contents", contents);
-            requestBody.put("generationConfig",
-                    generationConfig);
 
-            RequestBody body = RequestBody.create(
-                    requestBody.toString(),
-                    MediaType.get(
-                            "application/json; charset=utf-8"));
+            // Add conversation history
+            for (JSONObject message : conversationHistory) {
+
+                JSONObject content = new JSONObject();
+
+                JSONArray parts = new JSONArray();
+
+                JSONObject textPart = new JSONObject();
+
+                textPart.put(
+                        "text",
+                        message.getString("content")
+                );
+
+
+                parts.put(textPart);
+
+                content.put(
+                        "parts",
+                        parts
+                );
+
+
+                contents.put(content);
+
+            }
+
+
+
+            body.put(
+                    "contents",
+                    contents
+            );
+
+
+
+            RequestBody requestBody = RequestBody.create(
+                    body.toString(),
+                    MediaType.parse("application/json")
+            );
+
+
 
             Request request = new Request.Builder()
-                    .url(API_URL)
-                    .post(body)
-                    .addHeader("Content-Type",
-                            "application/json")
+
+                    .url(API_URL + "?key=" + API_KEY)
+
+                    .addHeader(
+                            "Content-Type",
+                            "application/json"
+                    )
+
+                    .post(requestBody)
+
                     .build();
 
-            client.newCall(request).enqueue(
-                    new Callback() {
-                        @Override
-                        public void onFailure(
-                                Call call, IOException e) {
-                            mainHandler.post(() -> {
-                                removeTypingIndicator();
-                                addAIMessage(
-                                        "⚠️ Connection failed. " +
-                                                "Please check your " +
-                                                "internet connection.");
-                            });
-                        }
 
-                        @Override
-                        public void onResponse(
-                                Call call,
-                                Response response)
-                                throws IOException {
-                            String responseBody =
-                                    response.body().string();
-                            mainHandler.post(() -> {
-                                removeTypingIndicator();
-                                try {
-                                    JSONObject json =
-                                            new JSONObject(
-                                                    responseBody);
 
-                                    if (json.has("error")) {
-                                        String errMsg = json
-                                                .getJSONObject("error")
-                                                .getString("message");
-                                        addAIMessage(
-                                                "⚠️ " + errMsg);
-                                        return;
-                                    }
+            TextView typingBubble =
+                    addMessageBubble(
+                            "Typing...",
+                            false
+                    );
 
-                                    String reply = json
-                                            .getJSONArray("candidates")
-                                            .getJSONObject(0)
-                                            .getJSONObject("content")
-                                            .getJSONArray("parts")
-                                            .getJSONObject(0)
-                                            .getString("text");
 
-                                    addAIMessage(reply.trim());
 
-                                } catch (Exception e) {
-                                    addAIMessage(
-                                            "⚠️ Error processing " +
-                                                    "response. Please " +
-                                                    "try again.");
-                                }
-                            });
-                        }
-                    });
+            httpClient.newCall(request).enqueue(new Callback() {
+
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                    runOnUiThread(() ->
+                            typingBubble.setText(
+                                    "Sorry, I couldn't connect. Please try again."
+                            )
+                    );
+
+                }
+
+
+
+                @Override
+                public void onResponse(Call call, Response response)
+                        throws IOException {
+
+
+                    String rawBody =
+                            response.body() != null ?
+                                    response.body().string()
+                                    :
+                                    "";
+
+
+                    runOnUiThread(() ->
+                            handleGeminiResponse(
+                                    rawBody,
+                                    response.isSuccessful(),
+                                    typingBubble
+                            )
+                    );
+
+                }
+
+            });
+
 
         } catch (Exception e) {
-            removeTypingIndicator();
-            addAIMessage("⚠️ Error: " + e.getMessage());
+
+            addMessageBubble(
+                    "Something went wrong: " + e.getMessage(),
+                    false
+            );
+
         }
+
     }
 
-    private void addUserMessage(String message) {
-        TextView tv = new TextView(this);
-        tv.setText(message);
-        tv.setTextColor(Color.WHITE);
-        tv.setTextSize(14);
-        tv.setPadding(32, 24, 32, 24);
-        tv.setBackgroundResource(R.drawable.bubble_user);
+    private void handleGeminiResponse(
+            String rawBody,
+            boolean success,
+            TextView typingBubble) {
 
-        LinearLayout wrapper = new LinearLayout(this);
-        wrapper.setGravity(Gravity.END);
-        wrapper.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT));
-        wrapper.setPadding(0, 0, 0, 16);
-        wrapper.addView(tv);
 
-        chatContainer.addView(wrapper);
-        scrollToBottom();
-    }
+        try {
 
-    private void addAIMessage(String message) {
-        LinearLayout msgLayout = new LinearLayout(this);
-        msgLayout.setOrientation(
-                LinearLayout.HORIZONTAL);
-        msgLayout.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT));
-        msgLayout.setGravity(Gravity.START);
-        msgLayout.setPadding(0, 0, 0, 16);
 
-        ImageView avatar = new ImageView(this);
-        avatar.setImageResource(
-                R.mipmap.ic_launcher_round);
-        LayoutParams avatarParams =
-                new LayoutParams(40, 40);
-        avatarParams.setMargins(0, 8, 8, 0);
-        avatar.setLayoutParams(avatarParams);
-        msgLayout.addView(avatar);
+            if (!success) {
 
-        TextView tv = new TextView(this);
-        tv.setText(message);
-        tv.setTextColor(Color.parseColor("#1B5E20"));
-        tv.setTextSize(14);
-        tv.setPadding(32, 24, 32, 24);
-        tv.setBackgroundResource(R.drawable.bubble_ai);
-        tv.setMaxWidth(700);
+                typingBubble.setText(
+                        "Sorry, I'm having trouble connecting right now. Please try again in a moment."
+                );
+                android.util.Log.e("ChatActivity", "Gemini API Error: " + rawBody);
 
-        LinearLayout textWrapper =
-                new LinearLayout(this);
-        textWrapper.setLayoutParams(new LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT));
-        textWrapper.addView(tv);
-        msgLayout.addView(textWrapper);
+                return;
 
-        chatContainer.addView(msgLayout);
-        scrollToBottom();
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void addTypingIndicator() {
-        LinearLayout wrapper = new LinearLayout(this);
-        wrapper.setOrientation(
-                LinearLayout.HORIZONTAL);
-        wrapper.setGravity(Gravity.START);
-        wrapper.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT));
-        wrapper.setTag("typing_wrapper");
-        wrapper.setPadding(0, 0, 0, 16);
-
-        ImageView avatar = new ImageView(this);
-        avatar.setImageResource(
-                R.mipmap.ic_launcher_round);
-        LayoutParams avatarParams =
-                new LayoutParams(40, 40);
-        avatarParams.setMargins(0, 8, 8, 0);
-        avatar.setLayoutParams(avatarParams);
-        wrapper.addView(avatar);
-
-        TextView tv = new TextView(this);
-        tv.setText("Healing Bot is typing... 💚");
-        tv.setTextColor(Color.parseColor("#4CAF50"));
-        tv.setTextSize(12);
-        tv.setPadding(32, 16, 32, 16);
-        tv.setBackgroundResource(R.drawable.bubble_ai);
-        wrapper.addView(tv);
-
-        chatContainer.addView(wrapper);
-        scrollToBottom();
-    }
-
-    private void removeTypingIndicator() {
-        for (int i = chatContainer.getChildCount() - 1;
-             i >= 0; i--) {
-            Object tag = chatContainer
-                    .getChildAt(i).getTag();
-            if (tag != null &&
-                    tag.toString().equals("typing_wrapper")) {
-                chatContainer.removeViewAt(i);
-                break;
             }
+
+
+
+            JSONObject json =
+                    new JSONObject(rawBody);
+
+
+
+            JSONArray candidates =
+                    json.getJSONArray("candidates");
+
+
+
+            JSONObject candidate =
+                    candidates.getJSONObject(0);
+
+
+
+            JSONObject content =
+                    candidate.getJSONObject("content");
+
+
+
+            JSONArray parts =
+                    content.getJSONArray("parts");
+
+
+
+            String reply =
+                    parts.getJSONObject(0)
+                            .getString("text");
+
+
+
+            typingBubble.setText(reply);
+
+
+
+            // Save AI response
+            JSONObject assistantMsg =
+                    new JSONObject();
+
+
+            assistantMsg.put(
+                    "role",
+                    "assistant"
+            );
+
+
+            assistantMsg.put(
+                    "content",
+                    reply
+            );
+
+
+            conversationHistory.add(assistantMsg);
+
+
+
+        } catch (Exception e) {
+
+
+            typingBubble.setText(
+                    "Couldn't read Gemini response:\n"
+                            + e.getMessage()
+            );
+
+
         }
+
     }
 
-    private void scrollToBottom() {
-        scrollChat.post(() ->
-                scrollChat.fullScroll(
-                        ScrollView.FOCUS_DOWN));
+
+    private TextView addMessageBubble(String text, boolean isUser) {
+        LinearLayout row = new LinearLayout(this);
+        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        rowParams.bottomMargin = dp(12);
+        row.setLayoutParams(rowParams);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView bubble = new TextView(this);
+        LinearLayout.LayoutParams bubbleParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        bubble.setLayoutParams(bubbleParams);
+        bubble.setMaxWidth(dp(260));
+        bubble.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        bubble.setPadding(dp(12), dp(12), dp(12), dp(12));
+        bubble.setText(text);
+
+        if (isUser) {
+            row.setGravity(Gravity.END);
+            bubble.setTextColor(getResources().getColor(android.R.color.white));
+            bubble.setBackgroundResource(R.drawable.bubble_user);
+            row.addView(bubble);
+        } else {
+            row.setGravity(Gravity.START);
+            bubble.setTextColor(0xFF1B5E20);
+            bubble.setBackgroundResource(R.drawable.bubble_ai);
+
+            ImageView icon = new ImageView(this);
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(32), dp(32));
+            iconParams.setMarginEnd(dp(8));
+            iconParams.topMargin = dp(4);
+            icon.setLayoutParams(iconParams);
+            icon.setImageResource(R.mipmap.ic_launcher_round);
+
+            row.addView(icon);
+            row.addView(bubble);
+        }
+
+        chatContainer.addView(row);
+        scrollChat.post(() -> scrollChat.fullScroll(View.FOCUS_DOWN));
+        return bubble;
+    }
+
+    private int dp(int value) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, value, getResources().getDisplayMetrics());
     }
 }

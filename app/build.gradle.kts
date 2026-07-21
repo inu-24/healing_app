@@ -23,10 +23,9 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner =
-            "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // ✅ Inject API key into BuildConfig
+        // ✅ Inject Claude API key into BuildConfig
         buildConfigField(
             "String",
             "GEMINI_API_KEY",
@@ -42,8 +41,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile(
-                    "proguard-android-optimize.txt"),
+                getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
@@ -65,11 +63,10 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
 
     // Firebase
-    implementation(platform(
-        "com.google.firebase:firebase-bom:32.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 
-    // OkHttp
+    // ✅ ADD THIS: OkHttp for Claude API calls
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
