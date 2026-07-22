@@ -57,6 +57,7 @@ public class ProfileActivity extends BaseActivity {
         tvName = findViewById(R.id.tvName);
         tvJoinDate = findViewById(R.id.tvJoinDate);
         ImageView btnBack = findViewById(R.id.btnBack);
+        ImageView btnSettings = findViewById(R.id.btnSettings);
         LinearLayout btnLogout = findViewById(R.id.btnLogout);
         Button btnEditProfile = findViewById(R.id.btnEditProfile);
 
@@ -81,6 +82,13 @@ public class ProfileActivity extends BaseActivity {
 
         btnBack.setOnClickListener(v -> finish());
 
+        btnSettings.setOnClickListener(v -> {
+            Toast.makeText(ProfileActivity.this, "Settings Clicked", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
             startActivityForResult(intent, 1);
@@ -96,18 +104,6 @@ public class ProfileActivity extends BaseActivity {
         });
     }
 
-    /**
-     * Pulls the profile + stats from users/{uid} in Firestore.
-     * Expected fields on the document (adjust names to match your schema):
-     *   fullName            (String)
-     *   joinDate            (String, e.g. "Jan 2025")
-     *   checkInsThisWeek    (Long)
-     *   goodMoodDaysThisWeek(Long)
-     *   topMoodName         (String)
-     *   topMoodPercent      (Long, 0-100)
-     *   currentStreak       (Long)
-     *   artworksCount       (Long)
-     */
     private void loadUserData() {
         if (mAuth.getCurrentUser() == null) return;
 
