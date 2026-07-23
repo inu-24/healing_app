@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,6 +19,7 @@ public class HomeActivity extends BaseActivity {
             tvHomeArtworks, tvHomeStreak,
             tvLatestEmotion, tvLatestEmoji,
             tvHomeSessionCount;
+    TextView[] moodViews;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -44,12 +46,29 @@ public class HomeActivity extends BaseActivity {
                 findViewById(R.id.btnChatAI);
         Button btnViewProgress =
                 findViewById(R.id.btnViewProgress);
+        ImageView ivProfile = findViewById(R.id.ivProfile);
+
+        moodViews = new TextView[]{
+                findViewById(R.id.mood1),
+                findViewById(R.id.mood2),
+                findViewById(R.id.mood3),
+                findViewById(R.id.mood4),
+                findViewById(R.id.mood5)
+        };
+        for (TextView mood : moodViews) {
+            mood.setOnClickListener(v -> selectMood((TextView) v));
+        }
 
         if (mAuth.getCurrentUser() != null) {
             loadUserData();
             loadRealStats();
             loadLatestEmotion();
         }
+
+        ivProfile.setOnClickListener(v ->
+                startActivity(new Intent(
+                        HomeActivity.this,
+                        ProfileActivity.class)));
 
         btnStartDrawing.setOnClickListener(v ->
                 startActivity(new Intent(
@@ -65,6 +84,12 @@ public class HomeActivity extends BaseActivity {
                 startActivity(new Intent(
                         HomeActivity.this,
                         ProgressActivity.class)));
+    }
+
+    private void selectMood(TextView selected) {
+        for (TextView mood : moodViews) {
+            mood.setSelected(mood == selected);
+        }
     }
 
     private void loadUserData() {

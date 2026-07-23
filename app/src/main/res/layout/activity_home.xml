@@ -4,19 +4,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F0F7F0">
+    android:background="#F7F9F7">
 
-    <!-- Top Bar -->
+    <!-- Hero Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="26dp"
         android:gravity="center_vertical"
-        android:background="#2E7D32">
+        android:background="@drawable/bg_header_gradient">
+
+        <!-- Avatar -->
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="14dp">
+
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_avatar_ring_header"
+                android:contentDescription="@null"/>
+
+            <ImageView
+                android:id="@+id/ivProfile"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/todo1"
+                android:src="@mipmap/ic_launcher_round"
+                android:background="@drawable/circle_dark_green"
+                android:scaleType="centerCrop"
+                android:clipToOutline="true"/>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -37,44 +64,55 @@
                 android:layout_height="wrap_content"
                 android:text="@string/inuli"
                 android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textSize="21sp"
+                android:textStyle="bold"
+                android:layout_marginTop="1dp"/>
 
         </LinearLayout>
 
-        <!-- Sessions Badge -->
+        <!-- Sessions Pill -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginEnd="16dp">
-
-            <TextView
-                android:id="@+id/tvHomeSessionCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_tag_pill"
+            android:paddingStart="12dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sessions"
-                android:textColor="#A5D6A7"
-                android:textSize="10sp"/>
+                android:text="🌿"
+                android:textSize="14sp"
+                android:layout_marginEnd="6dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvHomeSessionCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sessions"
+                    android:textColor="#C8E6C9"
+                    android:textSize="9sp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/ivProfile"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:contentDescription="@string/todo1"
-            android:src="@mipmap/ic_launcher_round"
-            android:background="@drawable/circle_dark_green"/>
 
     </LinearLayout>
 
@@ -83,72 +121,98 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp"
         android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Mood Question -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/how_are_you_feeling_today"
-                android:textColor="#1B5E20"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="10dp"/>
-
-            <!-- Emoji Mood Row -->
+            <!-- Mood Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/card_shadow"
-                android:padding="14dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card_rounded"
+                android:elevation="2dp"
+                android:padding="16dp"
                 android:layout_marginBottom="16dp">
 
-                <TextView android:id="@+id/mood1"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="@string/emoji"
-                    android:gravity="center"
-                    android:textSize="26sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/how_are_you_feeling_today"
+                    android:textColor="#1B5E20"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
 
-                <TextView android:id="@+id/mood2"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="@string/emoji1"
-                    android:gravity="center"
-                    android:textSize="26sp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <TextView android:id="@+id/mood3"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="@string/emoji2"
-                    android:gravity="center"
-                    android:textSize="26sp"/>
+                    <TextView android:id="@+id/mood1"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="@string/emoji"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_mood_chip_selector"/>
 
-                <TextView android:id="@+id/mood4"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="@string/emoji3"
-                    android:gravity="center"
-                    android:textSize="26sp"/>
+                    <TextView android:id="@+id/mood2"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="@string/emoji1"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_mood_chip_selector"/>
 
-                <TextView android:id="@+id/mood5"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="@string/emoji4"
-                    android:gravity="center"
-                    android:textSize="26sp"/>
+                    <TextView android:id="@+id/mood3"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="@string/emoji2"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_mood_chip_selector"/>
+
+                    <TextView android:id="@+id/mood4"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="@string/emoji3"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_mood_chip_selector"/>
+
+                    <TextView android:id="@+id/mood5"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="@string/emoji4"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/bg_mood_chip_selector"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -171,35 +235,44 @@
                 <Button
                     android:id="@+id/btnStartDrawing"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
+                    android:layout_height="92dp"
                     android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/start_drawing"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#2E7D32"
-                    android:layout_marginEnd="8dp"
                     android:textSize="13sp"
-                    android:elevation="4dp"/>
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_quick_draw"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:stateListAnimator="@null"
+                    android:elevation="3dp"/>
 
                 <Button
                     android:id="@+id/btnChatAI"
                     android:layout_width="0dp"
-                    android:layout_height="90dp"
+                    android:layout_height="92dp"
                     android:layout_weight="1"
                     android:text="@string/chat_with_ai"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#388E3C"
                     android:textSize="13sp"
-                    android:elevation="4dp"/>
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_quick_chat"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:stateListAnimator="@null"
+                    android:elevation="3dp"/>
 
             </LinearLayout>
 
-            <!-- Real Stats Card -->
+            <!-- Journey Stats Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/card_shadow"
-                android:padding="16dp"
+                android:background="@drawable/bg_card_rounded"
+                android:elevation="2dp"
+                android:padding="18dp"
                 android:layout_marginBottom="16dp">
 
                 <TextView
@@ -209,14 +282,14 @@
                     android:textColor="#1B5E20"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="14dp"/>
 
                 <!-- Stats Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="14dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -224,9 +297,9 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="#E8F5E9"
-                        android:padding="12dp"
-                        android:layout_marginEnd="6dp">
+                        android:background="@drawable/bg_stat_box"
+                        android:padding="14dp"
+                        android:layout_marginEnd="8dp">
 
                         <TextView
                             android:id="@+id/tvHomeEmotions"
@@ -234,15 +307,16 @@
                             android:layout_height="wrap_content"
                             android:text="0"
                             android:textColor="#2E7D32"
-                            android:textSize="28sp"
+                            android:textSize="26sp"
                             android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Sessions"
-                            android:textColor="#4CAF50"
-                            android:textSize="11sp"/>
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp"/>
 
                     </LinearLayout>
 
@@ -252,9 +326,9 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="#E8F5E9"
-                        android:padding="12dp"
-                        android:layout_marginEnd="6dp">
+                        android:background="@drawable/bg_stat_box"
+                        android:padding="14dp"
+                        android:layout_marginEnd="8dp">
 
                         <TextView
                             android:id="@+id/tvHomeArtworks"
@@ -262,15 +336,16 @@
                             android:layout_height="wrap_content"
                             android:text="0"
                             android:textColor="#2E7D32"
-                            android:textSize="28sp"
+                            android:textSize="26sp"
                             android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Artworks"
-                            android:textColor="#4CAF50"
-                            android:textSize="11sp"/>
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp"/>
 
                     </LinearLayout>
 
@@ -280,8 +355,8 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="#E8F5E9"
-                        android:padding="12dp">
+                        android:background="@drawable/bg_stat_box"
+                        android:padding="14dp">
 
                         <TextView
                             android:id="@+id/tvHomeStreak"
@@ -289,15 +364,16 @@
                             android:layout_height="wrap_content"
                             android:text="0🔥"
                             android:textColor="#2E7D32"
-                            android:textSize="28sp"
+                            android:textSize="26sp"
                             android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Streak"
-                            android:textColor="#4CAF50"
-                            android:textSize="11sp"/>
+                            android:textColor="#5C8A5F"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp"/>
 
                     </LinearLayout>
 
@@ -309,15 +385,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:background="#F1F8F1"
+                    android:background="@drawable/bg_stat_box"
                     android:padding="12dp">
 
                     <TextView
                         android:id="@+id/tvLatestEmoji"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:text="🌱"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:background="@drawable/bg_icon_chip"
                         android:layout_marginEnd="10dp"/>
 
                     <LinearLayout
@@ -348,10 +426,18 @@
                         android:id="@+id/btnViewProgress"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
+                        android:minWidth="0dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
                         android:text="View"
                         android:textColor="#FFFFFF"
-                        android:backgroundTint="#2E7D32"
-                        android:textSize="11sp"/>
+                        android:textSize="11sp"
+                        android:textAllCaps="false"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_button_solid"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@null"
+                        android:elevation="0dp"/>
 
                 </LinearLayout>
 
@@ -361,27 +447,45 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/card_shadow"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card_rounded"
+                android:elevation="2dp"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tips_and_guides"
-                    android:textColor="#1B5E20"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="💡"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_icon_chip"
+                    android:layout_marginEnd="12dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/try_drawing_how_you_feel_today_n_take_5_deep_breaths_n_express_yourself_freely_through_art"
-                    android:textColor="#4CAF50"
-                    android:textSize="12sp"
-                    android:lineSpacingMultiplier="1.6"/>
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tips_and_guides"
+                        android:textColor="#1B5E20"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/try_drawing_how_you_feel_today_n_take_5_deep_breaths_n_express_yourself_freely_through_art"
+                        android:textColor="#5C8A5F"
+                        android:textSize="12sp"
+                        android:lineSpacingMultiplier="1.6"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
