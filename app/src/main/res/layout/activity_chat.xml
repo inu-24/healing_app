@@ -28,7 +28,7 @@
         <ImageView
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:contentDescription="@string/todo5" android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="@string/todo5" android:src="@drawable/ic_bot_avatar"
             android:layout_marginEnd="10dp"/>
 
         <LinearLayout
@@ -55,6 +55,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/btnShareChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dots"

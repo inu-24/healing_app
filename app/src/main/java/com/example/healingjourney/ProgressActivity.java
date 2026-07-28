@@ -6,12 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
+import android.widget.Button;
+import android.widget.Toast;
+import androidx.core.content.FileProvider;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.Calendar;
 import java.util.Date;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ProgressActivity extends BaseActivity {
 
@@ -20,10 +32,15 @@ public class ProgressActivity extends BaseActivity {
     TextView tvEncouragement, tvGreatJob;
     ProgressBar progressCalm, progressHappy, progressStressed;
     View barMon, barTue, barWed, barThu, barFri, barSat, barSun;
+    Button btnGenerateReport;
 
     FirebaseFirestore db;
     FirebaseAuth mAuth;
     String currentTab = "week";
+
+    // Cached stats, updated every time loadProgressData() finishes, so the
+    // report button can use the latest numbers whenever it's tapped.
+    int lastSessions = 0, lastArtworks = 0, lastCalm = 0, lastHappy = 0, lastStressed = 0;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -54,8 +71,11 @@ public class ProgressActivity extends BaseActivity {
         barFri = findViewById(R.id.barFri);
         barSat = findViewById(R.id.barSat);
         barSun = findViewById(R.id.barSun);
+        btnGenerateReport = findViewById(R.id.btnGenerateReport);
 
         btnBack.setOnClickListener(v -> finish());
+
+        btnGenerateReport.setOnClickListener(v -> generatePdfReport());
 
         tabWeek.setOnClickListener(v -> {
             currentTab = "week";
@@ -152,6 +172,12 @@ public class ProgressActivity extends BaseActivity {
                         }
                     }
 
+                    // ✅ Cache for the PDF report
+                    lastSessions = totalSessions;
+                    lastCalm = calmCount;
+                    lastHappy = happyCount;
+                    lastStressed = stressedCount;
+
                     // ✅ Update Sessions
                     tvSessions.setText(
                             String.valueOf(totalSessions));
@@ -219,6 +245,7 @@ public class ProgressActivity extends BaseActivity {
                             artworkCount++;
                         }
                     }
+                    lastArtworks = artworkCount;
                     tvArtworks.setText(
                             String.valueOf(artworkCount));
                 })
@@ -287,10 +314,107 @@ public class ProgressActivity extends BaseActivity {
     }
 
     private int dpToPx(int dp) {
-        float density = getResources()
-                .getDisplayMetrics().density;
+        float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
     }
+        private void generatePdfReport() {
+            PdfDocument document = new PdfDocument();
+            PdfDocument.PageInfo pageInfo =
+                    new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // A4 size in points
+            PdfDocument.Page page = document.startPage(pageInfo);
+            Canvas canvas = page.getCanvas();
+
+            Paint title = new Paint();
+            title.setTextSize(20);
+            title.setColor(0xFF2E7D32);
+            title.setFakeBoldText(true);
+
+            Paint label = new Paint();
+            label.setTextSize(13);
+            label.setColor(0xFF444444);
+
+            Paint value = new Paint();
+            value.setTextSize(13);
+            value.setColor(0xFF000000);
+            value.setFakeBoldText(true);
+
+            String period = currentTab.substring(0, 1).toUpperCase() + currentTab.substring(1);
+            String generatedOn = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+                    .format(new java.util.Date());
+
+            int y = 50;
+            canvas.drawText("Healing Journey — " + period + "ly Report", 40, y, title);
+
+            y += 30;
+            label.setTextSize(11);
+            canvas.drawText("Generated on " + generatedOn, 40, y, label);
+
+            y += 40;
+            canvas.drawText("Sessions completed:", 40, y, label);
+            canvas.drawText(String.valueOf(lastSessions), 250, y, value);
+
+            y += 25;
+            canvas.drawText("Artworks created:", 40, y, label);
+            canvas.drawText(String.valueOf(lastArtworks), 250, y, value);
+
+            y += 40;
+            canvas.drawText("Mood breakdown", 40, y, title);
+
+            int moodTotal = lastCalm + lastHappy + lastStressed;
+            int calmPct = moodTotal > 0 ? (lastCalm * 100) / moodTotal : 0;
+            int happyPct = moodTotal > 0 ? (lastHappy * 100) / moodTotal : 0;
+            int stressedPct = moodTotal > 0 ? (lastStressed * 100) / moodTotal : 0;
+
+            y += 30;
+            canvas.drawText("Calm / Peaceful:", 40, y, label);
+            canvas.drawText(calmPct + "%", 250, y, value);
+
+            y += 25;
+            canvas.drawText("Happy / Joyful:", 40, y, label);
+            canvas.drawText(happyPct + "%", 250, y, value);
+
+            y += 25;
+            canvas.drawText("Stressed:", 40, y, label);
+            canvas.drawText(stressedPct + "%", 250, y, value);
+
+            y += 40;
+            canvas.drawText("Note", 40, y, title);
+            y += 25;
+            String note = tvGreatJob != null ? tvGreatJob.getText().toString() : "";
+            String encouragement = tvEncouragement != null ? tvEncouragement.getText().toString() : "";
+            canvas.drawText(note, 40, y, label);
+            y += 20;
+            canvas.drawText(encouragement, 40, y, label);
+
+            document.finishPage(page);
+
+            try {
+                File dir = new File(getExternalFilesDir(null), "Documents");
+                if (!dir.exists()) dir.mkdirs();
+
+                String fileName = "HealingJourney_" + currentTab + "_report.pdf";
+                File file = new File(dir, fileName);
+                FileOutputStream out = new FileOutputStream(file);
+                document.writeTo(out);
+                out.close();
+                document.close();
+
+                Uri uri = FileProvider.getUriForFile(
+                        this, "com.example.healingjourney.fileprovider", file);
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("application/pdf");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(shareIntent, "Share your report"));
+
+            } catch (Exception e) {
+                document.close();
+                Toast.makeText(this, "Couldn't create report: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
 
     private void setActiveTab(String tab) {
         tabWeek.setBackgroundColor(0x00000000);

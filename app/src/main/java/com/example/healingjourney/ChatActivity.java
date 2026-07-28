@@ -1,5 +1,6 @@
 package com.example.healingjourney;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -13,16 +14,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,7 +39,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ChatActivity extends BaseActivity {
-
 
     private static final String API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
@@ -52,6 +57,10 @@ public class ChatActivity extends BaseActivity {
     private EditText etMessage;
     private ImageView btnSend;
     private TextView btnBack;
+    private TextView btnShareChat;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -73,14 +82,23 @@ public class ChatActivity extends BaseActivity {
         etMessage = findViewById(R.id.etMessage);
         btnSend = findViewById(R.id.btnSend);
         btnBack = findViewById(R.id.btnBack);
+        btnShareChat = findViewById(R.id.btnShareChat);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         btnBack.setOnClickListener(v -> finish());
+
+        btnShareChat.setOnClickListener(v -> shareRecentChat());
+
+        loadChatHistory();
 
         btnSend.setOnClickListener(v -> {
             String text = etMessage.getText().toString().trim();
             if (TextUtils.isEmpty(text)) return;
 
             addMessageBubble(text, true);
+            saveMessageToFirestore("user", text);
             etMessage.setText("");
             sendToGemini(text);
 
@@ -100,7 +118,7 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
-    /** Sends the user's message + full history to Claude and appends the reply when it arrives. */
+    /** Sends the user's message + full history to Gemini and appends the reply when it arrives. */
     private void sendToGemini(String userText) {
 
         try {
@@ -111,13 +129,8 @@ public class ChatActivity extends BaseActivity {
 
             conversationHistory.add(userMsg);
 
-
-
             JSONObject body = new JSONObject();
-
             JSONArray contents = new JSONArray();
-
-
 
             // Add system prompt
             JSONObject systemContent = new JSONObject();
@@ -131,217 +144,93 @@ public class ChatActivity extends BaseActivity {
 
             contents.put(systemContent);
 
-
-
             // Add conversation history
             for (JSONObject message : conversationHistory) {
 
                 JSONObject content = new JSONObject();
-
                 JSONArray parts = new JSONArray();
-
                 JSONObject textPart = new JSONObject();
 
-                textPart.put(
-                        "text",
-                        message.getString("content")
-                );
-
+                textPart.put("text", message.getString("content"));
 
                 parts.put(textPart);
-
-                content.put(
-                        "parts",
-                        parts
-                );
-
+                content.put("parts", parts);
 
                 contents.put(content);
-
             }
 
-
-
-            body.put(
-                    "contents",
-                    contents
-            );
-
-
+            body.put("contents", contents);
 
             RequestBody requestBody = RequestBody.create(
                     body.toString(),
                     MediaType.parse("application/json")
             );
 
-
-
             Request request = new Request.Builder()
-
                     .url(API_URL + "?key=" + API_KEY)
-
-                    .addHeader(
-                            "Content-Type",
-                            "application/json"
-                    )
-
+                    .addHeader("Content-Type", "application/json")
                     .post(requestBody)
-
                     .build();
 
-
-
-            TextView typingBubble =
-                    addMessageBubble(
-                            "Typing...",
-                            false
-                    );
-
-
+            TextView typingBubble = addMessageBubble("Typing...", false);
 
             httpClient.newCall(request).enqueue(new Callback() {
 
-
                 @Override
                 public void onFailure(Call call, IOException e) {
-
                     runOnUiThread(() ->
-                            typingBubble.setText(
-                                    "Sorry, I couldn't connect. Please try again."
-                            )
-                    );
-
+                            typingBubble.setText("Sorry, I couldn't connect. Please try again."));
                 }
 
-
-
                 @Override
-                public void onResponse(Call call, Response response)
-                        throws IOException {
-
-
-                    String rawBody =
-                            response.body() != null ?
-                                    response.body().string()
-                                    :
-                                    "";
-
+                public void onResponse(Call call, Response response) throws IOException {
+                    String rawBody = response.body() != null ? response.body().string() : "";
 
                     runOnUiThread(() ->
-                            handleGeminiResponse(
-                                    rawBody,
-                                    response.isSuccessful(),
-                                    typingBubble
-                            )
-                    );
-
+                            handleGeminiResponse(rawBody, response.isSuccessful(), typingBubble));
                 }
 
             });
 
-
         } catch (Exception e) {
-
-            addMessageBubble(
-                    "Something went wrong: " + e.getMessage(),
-                    false
-            );
-
+            addMessageBubble("Something went wrong: " + e.getMessage(), false);
         }
 
     }
 
-    private void handleGeminiResponse(
-            String rawBody,
-            boolean success,
-            TextView typingBubble) {
-
+    private void handleGeminiResponse(String rawBody, boolean success, TextView typingBubble) {
 
         try {
 
-
             if (!success) {
-
                 typingBubble.setText(
-                        "Sorry, I'm having trouble connecting right now. Please try again in a moment."
-                );
+                        "Sorry, I'm having trouble connecting right now. Please try again in a moment.");
                 android.util.Log.e("ChatActivity", "Gemini API Error: " + rawBody);
-
                 return;
-
             }
 
-
-
-            JSONObject json =
-                    new JSONObject(rawBody);
-
-
-
-            JSONArray candidates =
-                    json.getJSONArray("candidates");
-
-
-
-            JSONObject candidate =
-                    candidates.getJSONObject(0);
-
-
-
-            JSONObject content =
-                    candidate.getJSONObject("content");
-
-
-
-            JSONArray parts =
-                    content.getJSONArray("parts");
-
-
-
-            String reply =
-                    parts.getJSONObject(0)
-                            .getString("text");
-
-
+            JSONObject json = new JSONObject(rawBody);
+            JSONArray candidates = json.getJSONArray("candidates");
+            JSONObject candidate = candidates.getJSONObject(0);
+            JSONObject content = candidate.getJSONObject("content");
+            JSONArray parts = content.getJSONArray("parts");
+            String reply = parts.getJSONObject(0).getString("text");
 
             typingBubble.setText(reply);
 
-
-
             // Save AI response
-            JSONObject assistantMsg =
-                    new JSONObject();
-
-
-            assistantMsg.put(
-                    "role",
-                    "assistant"
-            );
-
-
-            assistantMsg.put(
-                    "content",
-                    reply
-            );
-
+            JSONObject assistantMsg = new JSONObject();
+            assistantMsg.put("role", "assistant");
+            assistantMsg.put("content", reply);
 
             conversationHistory.add(assistantMsg);
-
-
+            saveMessageToFirestore("assistant", reply);
 
         } catch (Exception e) {
-
-
-            typingBubble.setText(
-                    "Couldn't read Gemini response:\n"
-                            + e.getMessage()
-            );
-
-
+            typingBubble.setText("Couldn't read Gemini response:\n" + e.getMessage());
         }
 
     }
-
 
     private TextView addMessageBubble(String text, boolean isUser) {
         LinearLayout row = new LinearLayout(this);
@@ -375,7 +264,7 @@ public class ChatActivity extends BaseActivity {
             iconParams.setMarginEnd(dp(8));
             iconParams.topMargin = dp(4);
             icon.setLayoutParams(iconParams);
-            icon.setImageResource(R.mipmap.ic_launcher_round);
+            icon.setImageResource(R.drawable.ic_bot_avatar);
 
             row.addView(icon);
             row.addView(bubble);
@@ -389,5 +278,72 @@ public class ChatActivity extends BaseActivity {
     private int dp(int value) {
         return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, value, getResources().getDisplayMetrics());
+    }
+
+    /** Saves one message to this user's chat history in Firestore. */
+    private void saveMessageToFirestore(String role, String content) {
+        if (mAuth.getCurrentUser() == null) return;
+        String userId = mAuth.getCurrentUser().getUid();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("role", role);
+        data.put("content", content);
+        data.put("timestamp", com.google.firebase.Timestamp.now());
+
+        db.collection("users").document(userId)
+                .collection("chatMessages")
+                .add(data);
+    }
+
+    /** Loads this user's past messages (oldest first) and rebuilds the chat screen. */
+    private void loadChatHistory() {
+        if (mAuth.getCurrentUser() == null) return;
+        String userId = mAuth.getCurrentUser().getUid();
+
+        db.collection("users").document(userId)
+                .collection("chatMessages")
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        String role = doc.getString("role");
+                        String content = doc.getString("content");
+                        if (content == null) continue;
+
+                        boolean isUser = "user".equals(role);
+                        addMessageBubble(content, isUser);
+
+                        try {
+                            JSONObject msg = new JSONObject();
+                            msg.put("role", role);
+                            msg.put("content", content);
+                            conversationHistory.add(msg);
+                        } catch (JSONException ignored) { }
+                    }
+                });
+    }
+
+    /** Shares the last 5 messages of this conversation through any app the user picks. */
+    private void shareRecentChat() {
+        if (conversationHistory.isEmpty()) {
+            Toast.makeText(this, "No messages to share yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int start = Math.max(0, conversationHistory.size() - 5);
+        StringBuilder shareText = new StringBuilder("My Healing Journey chat:\n\n");
+
+        for (int i = start; i < conversationHistory.size(); i++) {
+            try {
+                JSONObject msg = conversationHistory.get(i);
+                String who = "user".equals(msg.getString("role")) ? "Me" : "Healing Bot";
+                shareText.append(who).append(": ").append(msg.getString("content")).append("\n\n");
+            } catch (JSONException ignored) { }
+        }
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText.toString());
+        startActivity(Intent.createChooser(shareIntent, "Share your chat"));
     }
 }
