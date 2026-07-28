@@ -379,5 +379,9 @@
     <string name="back8">Back</string>
     <string name="logout">Logout</string>
     <string name="icon">🚪</string>
+    <string name="feeling_stressed_these_gentle_mandalas">"Feeling stressed? These gentle mandalas "</string>
+    <string name="mandala_that_inspires_you_today">mandala that inspires you today. 🌿</string>
+    <string name="take_a_moment_for_yourself_choose">"Take a moment for yourself — choose "</string>
+    <string name="can_help_you_slow_down_and_breathe">can help you slow down and breathe. 🌊</string>
 
 </resources>

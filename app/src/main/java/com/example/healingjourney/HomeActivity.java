@@ -15,6 +15,7 @@ public class HomeActivity extends BaseActivity {
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
+    String selectedStressLevel = null;
     TextView tvUsername, tvHomeEmotions,
             tvHomeArtworks, tvHomeStreak,
             tvLatestEmotion, tvLatestEmoji,
@@ -63,6 +64,7 @@ public class HomeActivity extends BaseActivity {
             loadUserData();
             loadRealStats();
             loadLatestEmotion();
+            ProfileImageHelper.loadProfileImage(this, ivProfile);
         }
 
         ivProfile.setOnClickListener(v ->
@@ -70,10 +72,17 @@ public class HomeActivity extends BaseActivity {
                         HomeActivity.this,
                         ProfileActivity.class)));
 
-        btnStartDrawing.setOnClickListener(v ->
-                startActivity(new Intent(
-                        HomeActivity.this,
-                        MandalaActivity.class)));
+        btnStartDrawing.setOnClickListener(v -> {
+            if (selectedStressLevel == null) {
+                android.widget.Toast.makeText(this,
+                        "Tap how you're feeling above first 🙂",
+                        android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(HomeActivity.this, MandalaActivity.class);
+            intent.putExtra("stressLevel", selectedStressLevel);
+            startActivity(intent);
+        });
 
         btnChatAI.setOnClickListener(v ->
                 startActivity(new Intent(
@@ -90,6 +99,32 @@ public class HomeActivity extends BaseActivity {
         for (TextView mood : moodViews) {
             mood.setSelected(mood == selected);
         }
+
+        // mood1/mood2 = 😢 😔  → High stress
+        // mood3       = 😐    → Medium stress
+        // mood4/mood5 = 🙂 😄 → Low stress
+        int id = selected.getId();
+        if (id == R.id.mood1 || id == R.id.mood2) {
+            selectedStressLevel = "High";
+        } else if (id == R.id.mood3) {
+            selectedStressLevel = "Medium";
+        } else {
+            selectedStressLevel = "Low";
+        }
+
+        saveMoodCheckIn(selectedStressLevel);
+    }
+
+    private void saveMoodCheckIn(String stressLevel) {
+        if (mAuth.getCurrentUser() == null) return;
+        String userId = mAuth.getCurrentUser().getUid();
+
+        java.util.Map<String, Object> data = new java.util.HashMap<>();
+        data.put("userId", userId);
+        data.put("stressLevel", stressLevel);
+        data.put("timestamp", com.google.firebase.Timestamp.now());
+
+        db.collection("moodCheckins").add(data);
     }
 
     private void loadUserData() {

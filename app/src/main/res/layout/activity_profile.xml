@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,11 +23,11 @@
             android:padding="8dp"
             android:clickable="true"
             android:focusable="true"
+            android:tint="#FFFFFF"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back6"
             android:src="@drawable/baseline_arrow_back_ios_24"
-            android:layout_marginEnd="4dp"
-            app:tint="#FFFFFF" />
+            android:layout_marginEnd="4dp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -38,7 +37,7 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:gravity="center" />
+            android:gravity="center"/>
 
         <ImageView
             android:id="@+id/btnSettings"
@@ -47,10 +46,10 @@
             android:padding="8dp"
             android:clickable="true"
             android:focusable="true"
+            android:tint="#FFFFFF"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/settings4"
-            android:src="@drawable/baseline_settings_24"
-            app:tint="#FFFFFF" />
+            android:src="@drawable/baseline_settings_24"/>
 
     </LinearLayout>
 
@@ -94,8 +93,7 @@
                         android:src="@mipmap/ic_launcher_round"
                         android:background="@drawable/circle_light_green"
                         android:scaleType="centerCrop"
-                        android:clipToOutline="true"
-                        tools:targetApi="31" />
+                        android:clipToOutline="true"/>
 
                 </FrameLayout>
 

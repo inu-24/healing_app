@@ -27,7 +27,27 @@ public class MandalaActivity extends BaseActivity {
         setContentView(R.layout.activity_mandala);
 
         TextView btnBack = findViewById(R.id.btnBack);
+        TextView tvMoodTip = findViewById(R.id.tvMoodTip);
         GridView gridMandalas = findViewById(R.id.gridMandalas);
+
+        String stressLevel = getIntent().getStringExtra("stressLevel");
+        if (stressLevel == null) stressLevel = "Medium";
+
+        if (tvMoodTip != null) {
+            switch (stressLevel) {
+                case "High":
+                    tvMoodTip.setText(getString(R.string.feeling_stressed_these_gentle_mandalas) +
+                            getString(R.string.can_help_you_slow_down_and_breathe));
+                    break;
+                case "Low":
+                    tvMoodTip.setText("You're in a good place! Pick any " +
+                            getString(R.string.mandala_that_inspires_you_today));
+                    break;
+                default:
+                    tvMoodTip.setText(getString(R.string.take_a_moment_for_yourself_choose) +
+                            "whichever mandala speaks to you. 🎨");
+            }
+        }
 
         btnBack.setOnClickListener(v -> finish());
 

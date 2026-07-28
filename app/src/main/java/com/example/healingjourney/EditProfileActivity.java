@@ -6,6 +6,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.net.Uri;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,6 +24,15 @@ public class EditProfileActivity extends BaseActivity {
     private EditText etFullName, etEmail, etBio;
     private Button btnSave;
     private ImageView btnBack;
+    private ImageView ivProfilePhoto;
+
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    ProfileImageHelper.saveProfileImage(this, uri);
+                    ProfileImageHelper.loadProfileImage(this, ivProfilePhoto);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +54,14 @@ public class EditProfileActivity extends BaseActivity {
         etBio = findViewById(R.id.etBio);
         btnSave = findViewById(R.id.btnSave);
         btnBack = findViewById(R.id.btnBack);
+        ivProfilePhoto = findViewById(R.id.ivProfilePhoto);
+
+        ProfileImageHelper.loadProfileImage(this, ivProfilePhoto);
+
+        ivProfilePhoto.setOnClickListener(v ->
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build()));
     }
 
     private void loadUserData() {

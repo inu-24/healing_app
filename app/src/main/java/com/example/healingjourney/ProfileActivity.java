@@ -23,8 +23,10 @@ public class ProfileActivity extends BaseActivity {
     FirebaseFirestore db;
 
     // Header
+    // Header
     TextView tvName;
     TextView tvJoinDate;
+    ImageView ivProfilePhoto;
 
     // Mood summary
     TextView tvCheckInsCount;
@@ -54,8 +56,11 @@ public class ProfileActivity extends BaseActivity {
         db = FirebaseFirestore.getInstance();
 
         // Header
+        // Header
         tvName = findViewById(R.id.tvName);
         tvJoinDate = findViewById(R.id.tvJoinDate);
+        ivProfilePhoto = findViewById(R.id.ivProfilePhoto);
+        ProfileImageHelper.loadProfileImage(this, ivProfilePhoto);
         ImageView btnBack = findViewById(R.id.btnBack);
         ImageView btnSettings = findViewById(R.id.btnSettings);
         LinearLayout btnLogout = findViewById(R.id.btnLogout);
