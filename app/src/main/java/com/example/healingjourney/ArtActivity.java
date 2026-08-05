@@ -31,8 +31,10 @@ public class ArtActivity extends BaseActivity {
         // Load mandala if selected
         int mandalaId = getIntent().getIntExtra("mandalaId", -1);
         if (mandalaId != -1) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             Bitmap mandala = BitmapFactory.decodeResource(
-                    getResources(), mandalaId);
+                    getResources(), mandalaId, options);
             drawingView.setBackgroundBitmap(mandala);
         }
 

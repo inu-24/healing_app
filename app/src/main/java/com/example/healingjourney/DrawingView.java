@@ -5,10 +5,11 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class DrawingView extends View {
@@ -30,10 +31,11 @@ public class DrawingView extends View {
     public enum Mode { DRAW, FILL }
     private Mode currentMode = Mode.FILL;
 
-    public Map<Integer, Integer> colorUsageCount = new HashMap<>();
+    public Map<Integer, Integer> colorUsageCount = new ConcurrentHashMap<>();
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
         setupPaint();
     }
 
@@ -50,6 +52,8 @@ public class DrawingView extends View {
         mandalaOverlayPaint = new Paint();
         mandalaOverlayPaint.setAntiAlias(true);
         mandalaOverlayPaint.setFilterBitmap(true);
+        mandalaOverlayPaint.setXfermode(
+                new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
     }
 
     public void setBackgroundBitmap(Bitmap bitmap) {
@@ -104,10 +108,21 @@ public class DrawingView extends View {
 
         if (currentMode == Mode.FILL) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                final int touchX = (int) x;
+                final int touchY = (int) y;
+                final int fillColor = currentColor;
                 new Thread(() -> {
-                    floodFill((int) x, (int) y, currentColor);
-                    colorUsageCount.merge(currentColor, 10, Integer::sum);
-                    post(this::invalidate);
+                    try {
+                        floodFill(touchX, touchY, fillColor);
+                        colorUsageCount.merge(fillColor, 10, Integer::sum);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        post(() -> Toast.makeText(getContext(),
+                                "Couldn't fill that spot — try tapping a different area 🎨",
+                                Toast.LENGTH_SHORT).show());
+                    } finally {
+                        post(this::invalidate);
+                    }
                 }).start();
                 return true;
             }
@@ -133,7 +148,7 @@ public class DrawingView extends View {
         return true;
     }
 
-    private void floodFill(int x, int y, int fillColor) {
+    private synchronized void floodFill(int x, int y, int fillColor) {
         if (coloringBitmap == null) return;
 
         int width = coloringBitmap.getWidth();
@@ -241,7 +256,7 @@ public class DrawingView extends View {
         }
     }
 
-    public void clearCanvas() {
+    public synchronized void clearCanvas() {
         paths.clear();
         paints.clear();
         undonePaths.clear();

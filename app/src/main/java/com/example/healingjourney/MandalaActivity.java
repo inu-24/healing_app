@@ -12,14 +12,32 @@ import android.content.Context;
 
 public class MandalaActivity extends BaseActivity {
 
-    // ✅ Add your mandala drawable IDs here
-    int[] mandalaImages = {
-            R.drawable.mandala1,
-            R.drawable.mandala2,
-            R.drawable.mandala3,
-            R.drawable.mandala4,
-            R.drawable.mandala5
+    // ✅ Mandala sets — a different set of designs per mood/stress level
+    int[] highStressMandalas = {
+            R.drawable.mandala_high_1,
+            R.drawable.mandala_high_2,
+            R.drawable.mandala_high_3,
+            R.drawable.mandala_high_4,
+            R.drawable.mandala_high_5
     };
+
+    int[] mediumStressMandalas = {
+            R.drawable.mandala_medium_1,
+            R.drawable.mandala_medium_2,
+            R.drawable.mandala_medium_3,
+            R.drawable.mandala_medium_4,
+            R.drawable.mandala_medium_5
+    };
+
+    int[] lowStressMandalas = {
+            R.drawable.mandala_low_1,
+            R.drawable.mandala_low_2,
+            R.drawable.mandala_low_3,
+            R.drawable.mandala_low_4,
+            R.drawable.mandala_low_5
+    };
+
+    int[] mandalaImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +50,17 @@ public class MandalaActivity extends BaseActivity {
 
         String stressLevel = getIntent().getStringExtra("stressLevel");
         if (stressLevel == null) stressLevel = "Medium";
+
+        switch (stressLevel) {
+            case "High":
+                mandalaImages = highStressMandalas;
+                break;
+            case "Low":
+                mandalaImages = lowStressMandalas;
+                break;
+            default:
+                mandalaImages = mediumStressMandalas;
+        }
 
         if (tvMoodTip != null) {
             switch (stressLevel) {
