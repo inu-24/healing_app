@@ -12,32 +12,49 @@ import android.content.Context;
 
 public class MandalaActivity extends BaseActivity {
 
-    // ✅ Mandala sets — a different set of designs per mood/stress level
-    int[] highStressMandalas = {
+    // ✅ Your original classic mandalas — now included in every mood set
+    int[] classicMandalas = {
+            R.drawable.mandala1,
+            R.drawable.mandala2,
+            R.drawable.mandala3,
+            R.drawable.mandala4,
+            R.drawable.mandala5
+    };
+
+    // ✅ Mandala sets — a different set of designs per mood/stress level,
+    // plus the classic 5 available in every mood
+    int[] highStressMandalas = concat(new int[]{
             R.drawable.mandala_high_1,
             R.drawable.mandala_high_2,
             R.drawable.mandala_high_3,
             R.drawable.mandala_high_4,
             R.drawable.mandala_high_5
-    };
+    }, classicMandalas);
 
-    int[] mediumStressMandalas = {
+    int[] mediumStressMandalas = concat(new int[]{
             R.drawable.mandala_medium_1,
             R.drawable.mandala_medium_2,
             R.drawable.mandala_medium_3,
             R.drawable.mandala_medium_4,
             R.drawable.mandala_medium_5
-    };
+    }, classicMandalas);
 
-    int[] lowStressMandalas = {
+    int[] lowStressMandalas = concat(new int[]{
             R.drawable.mandala_low_1,
             R.drawable.mandala_low_2,
             R.drawable.mandala_low_3,
             R.drawable.mandala_low_4,
             R.drawable.mandala_low_5
-    };
+    }, classicMandalas);
 
     int[] mandalaImages;
+
+    private static int[] concat(int[] a, int[] b) {
+        int[] result = new int[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

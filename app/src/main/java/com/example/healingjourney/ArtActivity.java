@@ -102,10 +102,22 @@ public class ArtActivity extends BaseActivity {
         btnSave.setOnClickListener(v -> saveDrawingLocally());
 
         btnAnalyze.setOnClickListener(v -> {
-            int dominantColor = drawingView.getDominantColor();
+            java.util.List<DrawingView.ColorShare> distribution =
+                    drawingView.getColorDistribution();
+            float coverage = drawingView.getCanvasCoverage();
+
+            int[] topColors = new int[distribution.size()];
+            float[] topPercentages = new float[distribution.size()];
+            for (int i = 0; i < distribution.size(); i++) {
+                topColors[i] = distribution.get(i).color;
+                topPercentages[i] = distribution.get(i).percentage;
+            }
+
             Intent intent = new Intent(
                     ArtActivity.this, EmotionActivity.class);
-            intent.putExtra("dominantColor", dominantColor);
+            intent.putExtra("topColors", topColors);
+            intent.putExtra("topPercentages", topPercentages);
+            intent.putExtra("coverage", coverage);
             startActivity(intent);
         });
     }

@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.LinkedList;
@@ -32,6 +33,17 @@ public class DrawingView extends View {
     private Mode currentMode = Mode.FILL;
 
     public Map<Integer, Integer> colorUsageCount = new ConcurrentHashMap<>();
+
+    // ✅ Simple value holder for a colour's share of total usage
+    public static class ColorShare {
+        public final int color;
+        public final float percentage;
+
+        public ColorShare(int color, float percentage) {
+            this.color = color;
+            this.percentage = percentage;
+        }
+    }
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -277,11 +289,75 @@ public class DrawingView extends View {
         return bitmap;
     }
 
+    // ✅ Kept for backward compatibility — single most-used colour
     public int getDominantColor() {
         if (colorUsageCount.isEmpty()) return Color.GREEN;
         return colorUsageCount.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .get()
                 .getKey();
+    }
+
+    /**
+     * ✅ Returns up to the top 3 colours used, each with its share
+     * of total colour usage as a percentage (0–100). Sorted by
+     * usage descending. Empty list if nothing has been coloured/drawn.
+     */
+    public List<ColorShare> getColorDistribution() {
+        List<ColorShare> result = new ArrayList<>();
+        if (colorUsageCount.isEmpty()) return result;
+
+        long total = 0;
+        for (int count : colorUsageCount.values()) {
+            total += count;
+        }
+        if (total == 0) return result;
+
+        List<Map.Entry<Integer, Integer>> sorted =
+                new ArrayList<>(colorUsageCount.entrySet());
+        sorted.sort((a, b) -> b.getValue() - a.getValue());
+
+        int limit = Math.min(3, sorted.size());
+        for (int i = 0; i < limit; i++) {
+            Map.Entry<Integer, Integer> entry = sorted.get(i);
+            float percentage = (entry.getValue() / (float) total) * 100f;
+            result.add(new ColorShare(entry.getKey(), percentage));
+        }
+        return result;
+    }
+
+    /**
+     * ✅ Roughly what percentage (0–100) of the canvas has been
+     * drawn/filled on so far, based on the flood-filled regions
+     * plus any freehand strokes.
+     */
+    public float getCanvasCoverage() {
+        if (coloringBitmap == null) return 0f;
+
+        int width = coloringBitmap.getWidth();
+        int height = coloringBitmap.getHeight();
+        if (width == 0 || height == 0) return 0f;
+
+        Bitmap coverageBitmap = Bitmap.createBitmap(
+                width, height, Bitmap.Config.ARGB_8888);
+        Canvas coverageCanvas = new Canvas(coverageBitmap);
+
+        // Filled regions
+        coverageCanvas.drawBitmap(coloringBitmap, 0, 0, null);
+        // Freehand strokes (draw mode)
+        for (int i = 0; i < paths.size(); i++) {
+            coverageCanvas.drawPath(paths.get(i), paints.get(i));
+        }
+
+        int[] pixels = new int[width * height];
+        coverageBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+
+        long coveredCount = 0;
+        for (int pixel : pixels) {
+            if (Color.alpha(pixel) > 10) coveredCount++;
+        }
+        coverageBitmap.recycle();
+
+        return (coveredCount / (float) pixels.length) * 100f;
     }
 }
