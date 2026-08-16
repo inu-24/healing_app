@@ -10,13 +10,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import java.util.Calendar;
 
 public class HomeActivity extends BaseActivity {
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
     String selectedStressLevel = null;
-    TextView tvUsername, tvHomeEmotions,
+    TextView tvGreeting, tvUsername, tvHomeEmotions,
             tvHomeArtworks, tvHomeStreak,
             tvLatestEmotion, tvLatestEmoji,
             tvHomeSessionCount;
@@ -32,6 +33,7 @@ public class HomeActivity extends BaseActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        tvGreeting = findViewById(R.id.tvGreeting);
         tvUsername = findViewById(R.id.tvUsername);
         tvHomeEmotions = findViewById(R.id.tvHomeEmotions);
         tvHomeArtworks = findViewById(R.id.tvHomeArtworks);
@@ -40,6 +42,8 @@ public class HomeActivity extends BaseActivity {
         tvLatestEmoji = findViewById(R.id.tvLatestEmoji);
         tvHomeSessionCount =
                 findViewById(R.id.tvHomeSessionCount);
+
+        setGreeting();
 
         Button btnStartDrawing =
                 findViewById(R.id.btnStartDrawing);
@@ -93,6 +97,22 @@ public class HomeActivity extends BaseActivity {
                 startActivity(new Intent(
                         HomeActivity.this,
                         ProgressActivity.class)));
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setGreeting() {
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String greeting;
+        if (hour >= 5 && hour < 12) {
+            greeting = "Good Morning";
+        } else if (hour >= 12 && hour < 17) {
+            greeting = "Good Afternoon";
+        } else if (hour >= 17 && hour < 21) {
+            greeting = "Good Evening";
+        } else {
+            greeting = "Good Night";
+        }
+        tvGreeting.setText(greeting);
     }
 
     private void selectMood(TextView selected) {

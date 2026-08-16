@@ -97,11 +97,10 @@ public class SettingsActivity extends AppCompatActivity {
                     prefs.edit()
                             .putBoolean("darkMode", checked)
                             .apply();
-                    Toast.makeText(this,
-                            checked ?
-                                    "Dark mode coming soon! 🌙" :
-                                    "Light mode",
-                            Toast.LENGTH_SHORT).show();
+                    androidx.appcompat.app.AppCompatDelegate
+                            .setDefaultNightMode(checked
+                                    ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                                    : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
                 });
 
         // Privacy Policy
