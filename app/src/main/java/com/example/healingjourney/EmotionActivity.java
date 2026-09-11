@@ -156,14 +156,6 @@ public class EmotionActivity extends BaseActivity {
      * ✅ Rule-based detection using the combination of the top colours
      * used (with their share of total usage) and how much of the
      * canvas was covered — instead of a single colour check.
-     *
-     * - Each top colour is bucketed into a category, and its usage
-     *   percentage is added to that category's running score.
-     * - A clearly leading category (or a leading category backed by
-     *   heavy canvas coverage) is trusted directly.
-     * - When no category clearly leads, coverage breaks the tie:
-     *   very little of the canvas touched reads as hesitancy/low
-     *   engagement, otherwise it's treated as genuinely mixed feelings.
      */
     private void detectEmotion(int[] colors, float[] percentages, float coverage) {
         if (colors == null || colors.length == 0) {
